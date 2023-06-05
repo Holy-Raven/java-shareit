@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.Getter;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Repository
-public class UserStorageImpl implements UserStorage {
+public class UserRepositoryImpl implements UserRepository {
 
     static long newId = 1;
 
@@ -20,7 +21,7 @@ public class UserStorageImpl implements UserStorage {
         if (userMap.containsKey(userid)) {
             return userMap.get(userid);
         } else {
-            throw new RuntimeException("юзера нет в базе");
+            throw new NotFoundException("юзера нет в базе");
         }
     }
     @Override
@@ -47,7 +48,7 @@ public class UserStorageImpl implements UserStorage {
     public User update(User user, long userId) {
 
         if (!userMap.containsKey(userId)){
-            throw new RuntimeException("юзера нет в базе");
+            throw new NotFoundException("юзера нет в базе");
         }
 
         User newUser = userMap.get(userId);
@@ -75,7 +76,7 @@ public class UserStorageImpl implements UserStorage {
     @Override
     public void delete(User user){
         if (!userMap.containsValue(user)){
-            throw new RuntimeException("юзера нет в базе");
+            throw new NotFoundException("юзера нет в базе");
         }        userMap.remove(user.getId());
     }
 

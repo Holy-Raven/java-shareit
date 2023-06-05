@@ -4,7 +4,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-public interface UserStorage {
+public interface UserRepository {
 
     User get(long userid);
 

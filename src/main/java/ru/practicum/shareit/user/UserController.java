@@ -22,8 +22,9 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping(path = "/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final UserMapper mapper;
+
     @PostMapping
     public UserDto addUser(@RequestBody @Valid UserDto userDto) {
 
@@ -31,6 +32,7 @@ public class UserController {
         userService.addUser(user);
 
         return mapper.returnUserDto(user);
+
     }
 
     @PatchMapping("/{userId}")
@@ -39,6 +41,7 @@ public class UserController {
         User user = mapper.returnUser(userDto);
 
         return mapper.returnUserDto(userService.updateUser(user, userId));
+
     }
 
     @DeleteMapping("/{userId}")
