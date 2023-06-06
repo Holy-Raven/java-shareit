@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import lombok.Getter;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
@@ -18,6 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(long userId) {
+
         if (userMap.containsKey(userId)) {
             return userMap.get(userId);
         } else {
@@ -34,7 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User add(User user) {
 
         for (User userCheckEmail : getAll()) {
-            if (userCheckEmail.getEmail().equals(user.getEmail())){
+            if (userCheckEmail.getEmail().equals(user.getEmail())) {
                 throw new RuntimeException("there is already a user with an email " + user.getEmail());
             }
         }
@@ -70,10 +70,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void delete(User user){
-        if (!userMap.containsValue(user)){
+    public void delete(User user) {
+
+        if (!userMap.containsValue(user)) {
             throw new NotFoundException("User id " + user.getId() + " not found.");
-        }        userMap.remove(user.getId());
+        }
+
+        userMap.remove(user.getId());
     }
 
 }

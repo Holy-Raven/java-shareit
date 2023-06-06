@@ -17,6 +17,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item get(long itemId) {
+
         if (allItems.containsKey(itemId)) {
             return allItems.get(itemId);
         } else {
@@ -26,6 +27,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> getAll() {
+
         return new ArrayList<>(allItems.values());
     }
 
@@ -57,9 +59,11 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (item.getName() != null) {
             newItem.setName(item.getName());
         }
+
         if (item.getDescription() != null) {
             newItem.setDescription(item.getDescription());
         }
+
         if (item.getAvailable() != null) {
             newItem.setAvailable(item.getAvailable());
         }
@@ -77,6 +81,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> getItemListByUserId(long userId) {
+
        return items.getOrDefault(userId, Collections.emptyList());
     }
 
