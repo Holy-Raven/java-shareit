@@ -6,9 +6,15 @@ import java.util.List;
 
 interface ItemService {
 
-//    List<Item> getItems(long userId);
+    Item addItem(long owner, Item item);
 
-    Item addNewItem(long owner, Item item);
+    Item updateItem(Item item, long itemId, long userId);
 
+    Item getItemById(long itemId);
+
+    List<Item> getItemsUser(long userId);
+
+
+//    List<Item> getAllItems();
 //    void deleteItem(long userId, long itemId);
 }

@@ -30,7 +30,6 @@ public class UserController {
 
         User user = mapper.returnUser(userDto);
         userService.addUser(user);
-
         return mapper.returnUserDto(user);
 
     }
@@ -39,23 +38,25 @@ public class UserController {
     public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long userId) {
 
         User user = mapper.returnUser(userDto);
-
         return mapper.returnUserDto(userService.updateUser(user, userId));
 
     }
 
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
+
         userService.deleteUser(userId);
     }
 
     @GetMapping("/{userId}")
     public UserDto getUser(@PathVariable Long userId) {
+
         return mapper.returnUserDto(userService.getUserById(userId));
     }
 
     @GetMapping
     public List<UserDto> getAllUsers() {
+
         return userService.getAllUsers()
                 .stream()
                 .map(mapper::returnUserDto)

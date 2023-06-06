@@ -10,9 +10,9 @@ public interface UserRepository {
 
     List<User> getAll();
 
-    User add(User user) ;
+    User add(User user);
 
-    User update(User user, long userId) ;
+    User update(User user, long userId);
 
     void delete(User user);
 

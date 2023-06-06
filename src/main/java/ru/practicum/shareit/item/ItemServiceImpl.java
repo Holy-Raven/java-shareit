@@ -2,30 +2,60 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemRepository repository;
+    private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-//    @Override
-//    public List<Item> getItems(long userId) {
-//        return repository.findByUserId(userId);
-//    }
+    @Override
+    public Item addItem(long userId, Item item) {
+
+        userRepository.get(userId);
+        item.setOwner(userId);
+        return itemRepository.add(item);
+    }
 
     @Override
-    public Item addNewItem(long owner, Item item) {
+    public Item updateItem(Item item, long itemId, long userId) {
 
-        userRepository.get(owner);
+        userRepository.get(userId);
+        itemRepository.get(itemId);
 
-        item.setOwner(owner);
+        item.setId(itemId);
+        item.setOwner(userId);
 
-        return repository.add(item);
+        if (!getItemsUser(userId).contains(item)) {
+            throw new NotFoundException("данная вещь не принадлежит этому юзеру");
+        }
+
+        return itemRepository.update(userId, item);
     }
+
+
+    @Override
+    public Item getItemById(long userId) {
+        return itemRepository.get(userId);
+    }
+
+
+    @Override
+    public List<Item> getItemsUser(long userId) {
+        userRepository.get(userId);
+        return itemRepository.getItemListByUserId(userId);
+    }
+
+//    @Override
+//    public List<Item> getAllItems() {
+//        return repository.getAll();
+//    }
 
 //    @Override
 //    public void deleteItem(long userId, long itemId) {

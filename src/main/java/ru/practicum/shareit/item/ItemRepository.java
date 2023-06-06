@@ -6,9 +6,16 @@ import java.util.List;
 
 interface ItemRepository {
 
-//    List<Item> findByUserId(long userId);
+    Item get(long itemId);
+
+    List<Item> getAll();
 
     Item add(Item item);
+
+    Item update(long userId, Item item);
+
+    List<Item> getItemListByUserId(long userId);
+
 
 //    void deleteByUserIdAndItemId(long userId, long itemId);
 

@@ -10,29 +10,32 @@ import java.util.List;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    UserRepository userStorage;
+    UserRepository repository;
     @Override
     public User addUser(User user) {
-        return userStorage.add(user);
+        return repository.add(user);
     }
 
     @Override
     public User updateUser(User user, long userId) {
-        return userStorage.update(user, userId);
+
+        repository.get(userId);
+        user.setId(userId);
+        return repository.update(user, userId);
     }
 
     @Override
     public void deleteUser(long userId) {
-        userStorage.delete(userStorage.get(userId));
+        repository.delete(repository.get(userId));
     }
 
     @Override
     public User getUserById(long userId) {
-    return userStorage.get(userId);
+    return repository.get(userId);
     }
 
     @Override
     public List<User> getAllUsers() {
-        return userStorage.getAll();
+        return repository.getAll();
     }
 }
