@@ -25,5 +25,4 @@ public class UserDto {
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email must contain the character @")
     String email;
-
 }

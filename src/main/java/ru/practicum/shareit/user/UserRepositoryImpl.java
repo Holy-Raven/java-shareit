@@ -14,7 +14,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     static long newId = 1;
 
-    @Getter
     private final HashMap<Long, User> userMap = new HashMap<>();
 
     @Override
@@ -47,6 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
         userMap.put(user.getId(), user);
         return user;
     }
+
     @Override
     public User update(User user, long userId) {
 

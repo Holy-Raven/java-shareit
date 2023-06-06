@@ -11,6 +11,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     UserRepository repository;
+
     @Override
     public User addUser(User user) {
         return repository.add(user);
