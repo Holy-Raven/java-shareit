@@ -31,7 +31,6 @@ public class UserController {
         User user = mapper.returnUser(userDto);
         userService.addUser(user);
         return mapper.returnUserDto(user);
-
     }
 
     @PatchMapping("/{userId}")
@@ -39,7 +38,6 @@ public class UserController {
 
         User user = mapper.returnUser(userDto);
         return mapper.returnUserDto(userService.updateUser(user, userId));
-
     }
 
     @DeleteMapping("/{userId}")

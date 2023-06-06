@@ -15,14 +15,14 @@ public class UserRepositoryImpl implements UserRepository {
     static long newId = 1;
 
     @Getter
-    private HashMap<Long, User> userMap = new HashMap<>();
+    private final HashMap<Long, User> userMap = new HashMap<>();
 
     @Override
     public User get(long userId) {
         if (userMap.containsKey(userId)) {
             return userMap.get(userId);
         } else {
-            throw new NotFoundException("юзера нет в базе");
+            throw new NotFoundException("User id " + userId + " not found.");
         }
     }
 
@@ -36,7 +36,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         for (User userCheckEmail : getAll()) {
             if (userCheckEmail.getEmail().equals(user.getEmail())){
-                throw new RuntimeException("пользователь с таким емайл уже есть");
+                throw new RuntimeException("there is already a user with an email " + user.getEmail());
             }
         }
 
@@ -58,7 +58,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (user.getEmail() != null) {
             for (User userCheckEmail : getAll()) {
                 if (userCheckEmail.getEmail().equals(user.getEmail()) && userCheckEmail.getId() != userId) {
-                    throw new RuntimeException("пользователь с таким емайл уже есть");
+                    throw new RuntimeException("there is already a user with an email " + user.getEmail());
                 }
             }
 
@@ -72,7 +72,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(User user){
         if (!userMap.containsValue(user)){
-            throw new NotFoundException("юзера нет в базе");
+            throw new NotFoundException("User id " + user.getId() + " not found.");
         }        userMap.remove(user.getId());
     }
 

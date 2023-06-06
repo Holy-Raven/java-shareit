@@ -16,7 +16,6 @@ interface ItemRepository {
 
     List<Item> getItemListByUserId(long userId);
 
-
-//    void deleteByUserIdAndItemId(long userId, long itemId);
+    List<Item> search(String text);
 
 }

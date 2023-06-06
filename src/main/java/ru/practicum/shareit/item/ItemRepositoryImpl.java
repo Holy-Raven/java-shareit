@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
@@ -11,9 +10,9 @@ import java.util.*;
 public class ItemRepositoryImpl implements ItemRepository {
 
     static long newId = 1;
+
     private final HashMap<Long, List<Item>> items = new HashMap<>();
 
-    @Getter
     private final HashMap<Long, Item> allItems = new HashMap<>();
 
     @Override
@@ -21,7 +20,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (allItems.containsKey(itemId)) {
             return allItems.get(itemId);
         } else {
-            throw new NotFoundException("вещи нет в базе");
+            throw new NotFoundException("Item id " + itemId + " not found.");
         }
     }
 
@@ -81,13 +80,28 @@ public class ItemRepositoryImpl implements ItemRepository {
        return items.getOrDefault(userId, Collections.emptyList());
     }
 
+    @Override
+    public List<Item> search(String text) {
 
-//    @Override
-//    public void deleteByUserIdAndItemId(long userId, long itemId) {
-//        if(items.containsKey(userId)) {
-//            List<Item> userItems = items.get(userId);
-//            userItems.removeIf(item -> item.getId().equals(itemId));
-//        }
-//    }
+        Set<Item> set = new HashSet<>();
 
+        if (text.equals("")) {
+            return Collections.emptyList();
+        } else {
+            for (Item item : getAll()) {
+                if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+                    if (item.getAvailable()) {
+                        set.add(item);
+                    }
+                }
+                if (item.getDescription().toLowerCase().contains(text.toLowerCase())) {
+                    if (item.getAvailable()) {
+                        set.add(item);
+                    }
+                }
+            }
+        }
+
+        return new ArrayList<>(set);
+    }
 }

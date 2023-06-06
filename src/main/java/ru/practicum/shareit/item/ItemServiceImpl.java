@@ -33,12 +33,11 @@ public class ItemServiceImpl implements ItemService {
         item.setOwner(userId);
 
         if (!getItemsUser(userId).contains(item)) {
-            throw new NotFoundException("данная вещь не принадлежит этому юзеру");
+            throw new NotFoundException("the item was not found with the user id " + userId);
         }
 
         return itemRepository.update(userId, item);
     }
-
 
     @Override
     public Item getItemById(long userId) {
@@ -48,17 +47,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> getItemsUser(long userId) {
+
         userRepository.get(userId);
         return itemRepository.getItemListByUserId(userId);
     }
 
-//    @Override
-//    public List<Item> getAllItems() {
-//        return repository.getAll();
-//    }
+    @Override
+    public  List<Item> searchItem(String text) {
 
-//    @Override
-//    public void deleteItem(long userId, long itemId) {
-//        repository.deleteByUserIdAndItemId(userId, itemId);
-//    }
+        return itemRepository.search(text);
+     }
 }

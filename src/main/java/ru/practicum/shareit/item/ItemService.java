@@ -14,7 +14,6 @@ interface ItemService {
 
     List<Item> getItemsUser(long userId);
 
+    List<Item> searchItem(String text);
 
-//    List<Item> getAllItems();
-//    void deleteItem(long userId, long itemId);
 }
