@@ -16,12 +16,12 @@ import java.time.LocalDate;
 public class ItemRequest {
 
     @EqualsAndHashCode.Include
-    Long id;
+    private long id;
 
-    String description;
+    private String description;
 
-    long requestor;
+    private long requestor;
 
-    LocalDate created;
+    private LocalDate created;
 
 }

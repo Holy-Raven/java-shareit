@@ -13,17 +13,17 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class ItemDto {
 
-    long id;
+    private long id;
 
     @NotNull(message = "Name cannot be empty or contain spaces.")
     @NotBlank(message = "Name cannot be empty or contain spaces.")
-    String name;
+    private String name;
 
     @NotNull(message = "Description cannot be empty or contain spaces.")
     @NotBlank(message = "Description cannot be empty or contain spaces.")
-    String description;
+    private String description;
 
     @NotNull(message = "Available cannot be empty")
-    Boolean available;
+    private Boolean available;
 
 }

@@ -9,7 +9,7 @@ import java.util.*;
 @Component
 public class ItemRepositoryImpl implements ItemRepository {
 
-    static long newId = 1;
+    private static long newId = 1;
 
     private final HashMap<Long, List<Item>> items = new HashMap<>();
 
@@ -21,7 +21,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (allItems.containsKey(itemId)) {
             return allItems.get(itemId);
         } else {
-            throw new NotFoundException("Item id " + itemId + " not found.");
+            throw new NotFoundException(Item.class, "Item id " + itemId + " not found.");
         }
     }
 

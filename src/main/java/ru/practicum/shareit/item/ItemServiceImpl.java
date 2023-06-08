@@ -33,7 +33,7 @@ public class ItemServiceImpl implements ItemService {
         item.setOwner(userId);
 
         if (!getItemsUser(userId).contains(item)) {
-            throw new NotFoundException("the item was not found with the user id " + userId);
+            throw new NotFoundException(Item.class, "the item was not found with the user id " + userId);
         }
 
         return itemRepository.update(userId, item);

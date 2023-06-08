@@ -12,25 +12,24 @@ import java.time.LocalDate;
  */
 
 @Data
-@Value
 @Builder
 public class ItemRequestDto {
 
     @Positive
-    long id;
+    private long id;
 
     @NotNull(message = "Description cannot be empty or contain spaces.")
     @NotBlank(message = "Name cannot be empty or contain spaces.")
     @Size(max = 200, message = "The maximum length of the description should not exceed 200 characters")
-    String description;
+    private String description;
 
     @Positive
     @NotNull(message = "Description cannot be empty or contain spaces.")
-    long requestor;
+    private long requestor;
 
     @NotNull
     @PastOrPresent
-    LocalDate created;
+    private LocalDate created;
 
 }
 

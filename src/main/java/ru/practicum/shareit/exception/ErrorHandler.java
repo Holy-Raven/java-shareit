@@ -23,4 +23,12 @@ public class ErrorHandler {
                 e.getMessage()
         );
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleEmailExistException(final EmailExistException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
 }

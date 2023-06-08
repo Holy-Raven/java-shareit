@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -11,7 +13,7 @@ import java.util.List;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    static long newId = 1;
+    private static long newId = 1;
 
     private final HashMap<Long, User> userMap = new HashMap<>();
 
@@ -21,7 +23,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (userMap.containsKey(userId)) {
             return userMap.get(userId);
         } else {
-            throw new NotFoundException("User id " + userId + " not found.");
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
     }
 
@@ -35,7 +37,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         for (User userCheckEmail : getAll()) {
             if (userCheckEmail.getEmail().equals(user.getEmail())) {
-                throw new RuntimeException("there is already a user with an email " + user.getEmail());
+                throw new EmailExistException("there is already a user with an email " + user.getEmail());
             }
         }
 
@@ -58,7 +60,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (user.getEmail() != null) {
             for (User userCheckEmail : getAll()) {
                 if (userCheckEmail.getEmail().equals(user.getEmail()) && userCheckEmail.getId() != userId) {
-                    throw new RuntimeException("there is already a user with an email " + user.getEmail());
+                    throw new EmailExistException("there is already a user with an email " + user.getEmail());
                 }
             }
 
@@ -73,11 +75,10 @@ public class UserRepositoryImpl implements UserRepository {
     public void delete(User user) {
 
         if (!userMap.containsValue(user)) {
-            throw new NotFoundException("User id " + user.getId() + " not found.");
+            throw new NotFoundException(User.class, "User id " + user.getId() + " not found.");
         }
 
         userMap.remove(user.getId());
     }
-
 }
 
