@@ -17,11 +17,19 @@ public class UserMapper {
     }
 
     public User returnUser(UserDto userDto) {
-        User user = User.builder()
-                .id(userDto.getId())
-                .email(userDto.getEmail())
-                .name(userDto.getName())
-                .build();
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
         return user;
+
+
+//        User user = User.builder()
+//                .id(userDto.getId())
+//                .email(userDto.getEmail())
+//                .name(userDto.getName())
+//                .build();
+
+
     }
 }

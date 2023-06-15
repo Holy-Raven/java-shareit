@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
@@ -18,7 +19,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item addItem(long userId, Item item) {
 
-        userRepository.get(userId);
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+
         item.setOwner(userId);
         return itemRepository.add(item);
     }
@@ -26,7 +30,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item updateItem(Item item, long itemId, long userId) {
 
-        userRepository.get(userId);
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+
         itemRepository.get(itemId);
 
         item.setId(itemId);
@@ -62,7 +69,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> getItemsUser(long userId) {
 
-        userRepository.get(userId);
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+
         return itemRepository.getItemListByUserId(userId);
     }
 
