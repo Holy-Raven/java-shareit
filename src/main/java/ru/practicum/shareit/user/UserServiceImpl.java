@@ -4,78 +4,22 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-//
-//@Service
-//@AllArgsConstructor
-//public class UserServiceImpl implements UserService {
-//
-//    UserRepository repository;
-//
-//    @Override
-//    public User addUser(User user) {
-//
-//        for (User userCheckEmail : repository.getAll()) {
-//            if (userCheckEmail.getEmail().equals(user.getEmail())) {
-//                throw new EmailExistException("there is already a user with an email " + user.getEmail());
-//            }
-//        }
-//
-//        return repository.add(user);
-//    }
-//
-//    @Override
-//    public User updateUser(User user, long userId) {
-//
-//        repository.get(userId);
-//        user.setId(userId);
-//
-//        User newUser = repository.get(userId);
-//
-//        if (user.getName() != null) {
-//            newUser.setName(user.getName());
-//        }
-//
-//        if (user.getEmail() != null) {
-//            for (User userCheckEmail : repository.getAll()) {
-//                if (userCheckEmail.getEmail().equals(user.getEmail()) && userCheckEmail.getId() != userId) {
-//                    throw new EmailExistException("there is already a user with an email " + user.getEmail());
-//                }
-//            }
-//
-//            newUser.setEmail(user.getEmail());
-//        }
-//
-//        return repository.update(newUser, userId);
-//    }
-//
-//    @Override
-//    public void deleteUser(long userId) {
-//        repository.delete(repository.get(userId));
-//    }
-//
-//    @Override
-//    public User getUserById(long userId) {
-//        return repository.get(userId);
-//    }
-//
-//    @Override
-//    public List<User> getAllUsers() {
-//        return repository.getAll();
-//    }
-//}
-
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserMapper mapper;
 
     @Override
-    public User addUser(User user) {
+    public UserDto addUser(UserDto userDto) {
+
+        User user = mapper.returnUser(userDto);
 
         for (User userCheckEmail : userRepository.findAll()) {
             if (userCheckEmail.getEmail().equals(user.getEmail())) {
@@ -83,11 +27,15 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        return mapper.returnUserDto(user);
     }
 
     @Override
-    public User updateUser(User user, long userId) {
+    public UserDto updateUser(UserDto userDto, long userId) {
+
+        User user = mapper.returnUser(userDto);
 
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
@@ -107,10 +55,12 @@ public class UserServiceImpl implements UserService {
                     throw new EmailExistException("there is already a user with an email " + user.getEmail());
                 }
             }
-
             newUser.setEmail(user.getEmail());
         }
-        return userRepository.save(newUser);
+
+        userRepository.save(newUser);
+
+        return mapper.returnUserDto(newUser);
     }
 
     @Override
@@ -119,23 +69,23 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
-
         userRepository.deleteById(userId);
     }
 
     @Override
-    public User getUserById(long userId) {
+    public UserDto getUserById(long userId) {
 
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         } else {
-            return userRepository.findById(userId).get();
+            return mapper.returnUserDto(userRepository.findById(userId).get());
         }
 
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+
+        return mapper.returnUserDtoList(userRepository.findAll());
     }
 }
