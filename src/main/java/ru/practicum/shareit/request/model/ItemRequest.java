@@ -1,27 +1,27 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.request.model;
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
 /**
- * TODO Sprint add-controllers.
+ * TODO Sprint add-item-requests.
  */
 
 @Data
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Item {
+public class ItemRequest {
 
     @EqualsAndHashCode.Include
     private long id;
 
-    private String name;
-
     private String description;
 
-    private Boolean available;
+    private long requestor;
 
-    private long owner;
+    private LocalDate created;
 
 }
