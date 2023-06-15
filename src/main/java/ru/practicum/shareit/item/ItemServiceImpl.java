@@ -36,7 +36,21 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(Item.class, "the item was not found with the user id " + userId);
         }
 
-        return itemRepository.update(userId, item);
+        Item newItem = itemRepository.get(item.getId());
+
+        if (item.getName() != null) {
+            newItem.setName(item.getName());
+        }
+
+        if (item.getDescription() != null) {
+            newItem.setDescription(item.getDescription());
+        }
+
+        if (item.getAvailable() != null) {
+            newItem.setAvailable(item.getAvailable());
+        }
+
+        return itemRepository.update(userId, newItem);
     }
 
     @Override
@@ -56,5 +70,5 @@ public class ItemServiceImpl implements ItemService {
     public  List<Item> searchItem(String text) {
 
         return itemRepository.search(text);
-     }
+    }
 }

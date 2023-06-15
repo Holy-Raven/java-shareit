@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -14,6 +15,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User user) {
+
+        for (User userCheckEmail : repository.getAll()) {
+            if (userCheckEmail.getEmail().equals(user.getEmail())) {
+                throw new EmailExistException("there is already a user with an email " + user.getEmail());
+            }
+        }
+
         return repository.add(user);
     }
 
@@ -22,7 +30,24 @@ public class UserServiceImpl implements UserService {
 
         repository.get(userId);
         user.setId(userId);
-        return repository.update(user, userId);
+
+        User newUser = repository.get(userId);
+
+        if (user.getName() != null) {
+            newUser.setName(user.getName());
+        }
+
+        if (user.getEmail() != null) {
+            for (User userCheckEmail : repository.getAll()) {
+                if (userCheckEmail.getEmail().equals(user.getEmail()) && userCheckEmail.getId() != userId) {
+                    throw new EmailExistException("there is already a user with an email " + user.getEmail());
+                }
+            }
+
+            newUser.setEmail(user.getEmail());
+        }
+
+        return repository.update(newUser, userId);
     }
 
     @Override
@@ -32,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long userId) {
-    return repository.get(userId);
+        return repository.get(userId);
     }
 
     @Override

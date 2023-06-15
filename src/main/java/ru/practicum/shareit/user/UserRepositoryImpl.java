@@ -34,12 +34,6 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User add(User user) {
 
-        for (User userCheckEmail : getAll()) {
-            if (userCheckEmail.getEmail().equals(user.getEmail())) {
-                throw new EmailExistException("there is already a user with an email " + user.getEmail());
-            }
-        }
-
         if (user.getId() == 0) {
             user.setId(newId++);
         }
@@ -51,33 +45,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User update(User user, long userId) {
 
-        User newUser = userMap.get(userId);
-
-        if (user.getName() != null) {
-            newUser.setName(user.getName());
-        }
-        if (user.getEmail() != null) {
-            for (User userCheckEmail : getAll()) {
-                if (userCheckEmail.getEmail().equals(user.getEmail()) && userCheckEmail.getId() != userId) {
-                    throw new EmailExistException("there is already a user with an email " + user.getEmail());
-                }
-            }
-
-            newUser.setEmail(user.getEmail());
-        }
-
-        userMap.put(userId, newUser);
+        userMap.put(userId, user);
         return userMap.get(user.getId());
     }
 
     @Override
     public void delete(User user) {
-
-        if (!userMap.containsValue(user)) {
-            throw new NotFoundException(User.class, "User id " + user.getId() + " not found.");
-        }
-
         userMap.remove(user.getId());
     }
 }
-

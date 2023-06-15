@@ -51,30 +51,12 @@ public class ItemRepositoryImpl implements ItemRepository {
         return item;
     }
 
-        @Override
-        public Item update(long userId, Item item) {
+    @Override
+    public Item update(long userId, Item item) {
 
-        Item newItem = allItems.get(item.getId());
+        allItems.put(item.getId(), item);
 
-        if (item.getName() != null) {
-            newItem.setName(item.getName());
-        }
-
-        if (item.getDescription() != null) {
-            newItem.setDescription(item.getDescription());
-        }
-
-        if (item.getAvailable() != null) {
-            newItem.setAvailable(item.getAvailable());
-        }
-
-        List<Item> list = items.get(userId);
-        list.remove(item);
-        list.add(newItem);
-
-        allItems.put(item.getId(), newItem);
-
-        return newItem;
+        return item;
     }
 
 
@@ -82,7 +64,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<Item> getItemListByUserId(long userId) {
 
-       return items.getOrDefault(userId, Collections.emptyList());
+        return items.getOrDefault(userId, Collections.emptyList());
     }
 
     @Override
