@@ -5,12 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 /**
  * TODO Sprint add-controllers.
@@ -24,7 +22,6 @@ import static java.util.stream.Collectors.toList;
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemMapper mapper;
 
     @PostMapping
     public ItemDto add(@RequestHeader("X-Sharer-User-Id") long userId,
@@ -44,7 +41,7 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getUser(@PathVariable Long itemId) {
+    public ItemDto getItem(@PathVariable Long itemId) {
 
         log.info("Get item {}", itemId);
         return itemService.getItemById(itemId);

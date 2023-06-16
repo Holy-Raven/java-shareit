@@ -1,18 +1,22 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import ru.practicum.shareit.user.model.User;
+
+import javax.persistence.*;
 
 /**
  * TODO Sprint add-controllers.
  */
 
-@Data
-@Builder
+@Entity
+@Table(name = "items", schema = "public")
+@Getter @Setter @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Item {
 
+    @Id
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private long id;
 
@@ -20,8 +24,12 @@ public class Item {
 
     private String description;
 
+    @Column(name = "is_available")
     private Boolean available;
 
-    private long owner;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
 }

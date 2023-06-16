@@ -21,14 +21,15 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
 
-        Item item = mapper.returnItem(itemDto);
-
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
-        item.setOwner(userId);
-        itemRepository.add(item);
+        User user = userRepository.findById(userId).get();
+
+        Item item = mapper.returnItem(itemDto, user);
+
+        itemRepository.save(item);
 
         return mapper.returnItemDto(item);
     }
@@ -36,22 +37,22 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
 
-        Item item = mapper.returnItem(itemDto);
-
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
-        itemRepository.get(itemId);
+        User user = userRepository.findById(userId).get();
 
+        Item item = mapper.returnItem(itemDto, user);
+
+        itemRepository.findById(itemId);
         item.setId(itemId);
-        item.setOwner(userId);
 
-        if (!itemRepository.getItemListByUserId(userId).contains(item)) {
+        if (!itemRepository.findByOwnerId(userId).contains(item)) {
             throw new NotFoundException(Item.class, "the item was not found with the user id " + userId);
         }
 
-        Item newItem = itemRepository.get(item.getId());
+        Item newItem = itemRepository.findById(item.getId()).get();
 
         if (item.getName() != null) {
             newItem.setName(item.getName());
@@ -65,14 +66,14 @@ public class ItemServiceImpl implements ItemService {
             newItem.setAvailable(item.getAvailable());
         }
 
-        itemRepository.update(userId, newItem);
+        itemRepository.save(newItem);
 
         return mapper.returnItemDto(newItem);
     }
 
     @Override
     public ItemDto getItemById(long userId) {
-        return mapper.returnItemDto(itemRepository.get(userId));
+        return mapper.returnItemDto(itemRepository.findById(userId).get());
     }
 
 
@@ -83,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
-        return mapper.returnItemDtoList(itemRepository.getItemListByUserId(userId));
+        return mapper.returnItemDtoList(itemRepository.findByOwnerId(userId));
     }
 
     @Override
