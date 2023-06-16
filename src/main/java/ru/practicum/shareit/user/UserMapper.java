@@ -21,7 +21,7 @@ public class UserMapper {
 
     public static User returnUser(UserDto userDto) {
         User user = new User();
-        user.setId(userDto.getId());
+        //user.setId(userDto.getId());
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         return user;

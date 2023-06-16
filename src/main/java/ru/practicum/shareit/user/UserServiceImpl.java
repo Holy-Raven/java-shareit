@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
         User user = mapper.returnUser(userDto);
 
-        if (userRepository.findById(userId).isEmpty()) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(long userId) {
 
-        if (userRepository.findById(userId).isEmpty()) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
         userRepository.deleteById(userId);
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(long userId) {
 
-        if (userRepository.findById(userId).isEmpty()) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         } else {
             return mapper.returnUserDto(userRepository.findById(userId).get());

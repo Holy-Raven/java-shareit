@@ -21,7 +21,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
 
-        if (userRepository.findById(userId).isEmpty()) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
@@ -37,15 +37,17 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
 
-        if (userRepository.findById(userId).isEmpty()) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
-        User user = userRepository.findById(userId).get();
+        if (!itemRepository.existsById(itemId)) {
+            throw new NotFoundException(Item.class, "Item id " + userId + " not found.");
+        }
 
+        User user = userRepository.findById(userId).get();
         Item item = mapper.returnItem(itemDto, user);
 
-        itemRepository.findById(itemId);
         item.setId(itemId);
 
         if (!itemRepository.findByOwnerId(userId).contains(item)) {
@@ -73,6 +75,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(long userId) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+
         return mapper.returnItemDto(itemRepository.findById(userId).get());
     }
 
@@ -80,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getItemsUser(long userId) {
 
-        if (userRepository.findById(userId).isEmpty()) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
