@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
@@ -72,19 +73,15 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         Set<Item> set = new HashSet<>();
 
-        if (text.equals("")) {
-            return Collections.emptyList();
-        } else {
-            for (Item item : getAll()) {
-                if (item.getName().toLowerCase().contains(text.toLowerCase())) {
-                    if (item.getAvailable()) {
-                        set.add(item);
-                    }
+        for (Item item : getAll()) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+                if (item.getAvailable()) {
+                    set.add(item);
                 }
-                if (item.getDescription().toLowerCase().contains(text.toLowerCase())) {
-                    if (item.getAvailable()) {
-                        set.add(item);
-                    }
+            }
+            if (item.getDescription().toLowerCase().contains(text.toLowerCase())) {
+                if (item.getAvailable()) {
+                    set.add(item);
                 }
             }
         }

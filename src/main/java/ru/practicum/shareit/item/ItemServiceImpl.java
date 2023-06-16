@@ -3,11 +3,12 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -15,20 +16,27 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemMapper mapper;
 
     @Override
-    public Item addItem(long userId, Item item) {
+    public ItemDto addItem(long userId, ItemDto itemDto) {
+
+        Item item = mapper.returnItem(itemDto);
 
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
         item.setOwner(userId);
-        return itemRepository.add(item);
+        itemRepository.add(item);
+
+        return mapper.returnItemDto(item);
     }
 
     @Override
-    public Item updateItem(Item item, long itemId, long userId) {
+    public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
+
+        Item item = mapper.returnItem(itemDto);
 
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
@@ -39,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
         item.setId(itemId);
         item.setOwner(userId);
 
-        if (!getItemsUser(userId).contains(item)) {
+        if (!itemRepository.getItemListByUserId(userId).contains(item)) {
             throw new NotFoundException(Item.class, "the item was not found with the user id " + userId);
         }
 
@@ -57,28 +65,34 @@ public class ItemServiceImpl implements ItemService {
             newItem.setAvailable(item.getAvailable());
         }
 
-        return itemRepository.update(userId, newItem);
+        itemRepository.update(userId, newItem);
+
+        return mapper.returnItemDto(newItem);
     }
 
     @Override
-    public Item getItemById(long userId) {
-        return itemRepository.get(userId);
+    public ItemDto getItemById(long userId) {
+        return mapper.returnItemDto(itemRepository.get(userId));
     }
 
 
     @Override
-    public List<Item> getItemsUser(long userId) {
+    public List<ItemDto> getItemsUser(long userId) {
 
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
-        return itemRepository.getItemListByUserId(userId);
+        return mapper.returnItemDtoList(itemRepository.getItemListByUserId(userId));
     }
 
     @Override
-    public  List<Item> searchItem(String text) {
+    public  List<ItemDto> searchItem(String text) {
 
-        return itemRepository.search(text);
+        if (text.equals("")) {
+            return Collections.emptyList();
+        } else {
+            return mapper.returnItemDtoList(itemRepository.search(text));
+        }
     }
 }

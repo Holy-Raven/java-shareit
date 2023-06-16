@@ -30,10 +30,8 @@ public class ItemController {
     public ItemDto add(@RequestHeader("X-Sharer-User-Id") long userId,
                        @RequestBody @Valid ItemDto itemDto) {
 
-        Item item = mapper.returnItem(itemDto);
-        itemService.addItem(userId, item);
-        log.info("User {}, add new item {}", userId, item.getName());
-        return mapper.returnItemDto(item);
+        log.info("User {}, add new item {}", userId, itemDto.getName());
+        return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
@@ -41,36 +39,28 @@ public class ItemController {
                               @RequestBody ItemDto itemDto,
                               @PathVariable Long itemId) {
 
-        Item item = mapper.returnItem(itemDto);
-        Item updateItem = itemService.updateItem(item, itemId, userId);
-        log.info("User {}, update item {}", userId, updateItem.getName());
-        return mapper.returnItemDto(updateItem);
+        log.info("User {}, update item {}", userId, itemDto.getName());
+        return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getUser(@PathVariable Long itemId) {
 
         log.info("Get item {}", itemId);
-        return mapper.returnItemDto(itemService.getItemById(itemId));
+        return itemService.getItemById(itemId);
     }
 
     @GetMapping
     public List<ItemDto> getAllItemsUser(@RequestHeader("X-Sharer-User-Id") long userId) {
 
         log.info("List items User {}", userId);
-        return itemService.getItemsUser(userId)
-                .stream()
-                .map(mapper::returnItemDto)
-                .collect(toList());
+        return itemService.getItemsUser(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> getSearchItem(String text) {
 
         log.info("Get item with key substring {}", text);
-        return itemService.searchItem(text)
-                .stream()
-                .map(mapper::returnItemDto)
-                .collect(toList());
+        return itemService.searchItem(text);
     }
 }

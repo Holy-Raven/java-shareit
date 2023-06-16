@@ -3,6 +3,11 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ItemMapper {
@@ -26,4 +31,15 @@ public class ItemMapper {
                 .build();
         return item;
     }
+
+    public List<ItemDto> returnItemDtoList(Iterable<Item> items) {
+        List<ItemDto> result = new ArrayList<>();
+
+        for (Item item : items) {
+            result.add(returnItemDto(item));
+        }
+
+        return result;
+    }
+
 }
