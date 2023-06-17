@@ -7,8 +7,6 @@ import ru.practicum.shareit.user.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static ru.practicum.shareit.booking.Status.WAITING;
-
 /**
  * TODO Sprint add-bookings.
  */
@@ -28,7 +26,7 @@ public class Booking {
     long id;
 
     @Column(name = "start_date", nullable = false)
-    LocalDateTime start;
+    LocalDateTime start = LocalDateTime.now();
 
     @Column(name = "end_date", nullable = false)
     LocalDateTime end;
