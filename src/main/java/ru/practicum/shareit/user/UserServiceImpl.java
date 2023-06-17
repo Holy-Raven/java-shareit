@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -22,10 +21,6 @@ public class UserServiceImpl implements UserService {
 
         User user = mapper.returnUser(userDto);
 
-        if (!userRepository.findByEmail(user.getEmail()).isEmpty()) {
-            throw new EmailExistException("there is already a user with an email " + user.getEmail());
-        }
-
         userRepository.save(user);
 
         return mapper.returnUserDto(user);
@@ -35,12 +30,11 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto, long userId) {
 
         User user = mapper.returnUser(userDto);
+        user.setId(userId);
 
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
-
-        user.setId(userId);
 
         User newUser = userRepository.findById(userId).get();
 
@@ -79,7 +73,6 @@ public class UserServiceImpl implements UserService {
         } else {
             return mapper.returnUserDto(userRepository.findById(userId).get());
         }
-
     }
 
     @Override
