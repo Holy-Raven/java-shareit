@@ -22,15 +22,13 @@ public class ItemMapper {
     }
 
     public Item returnItem(ItemDto itemDto, User user) {
-
-        Item item = new Item();
-
-        item.setId(itemDto.getId());
-        item.setName(itemDto.getName());
-        item.setDescription(itemDto.getDescription());
-        item.setAvailable(itemDto.getAvailable());
-        item.setOwner(user);
-
+        Item item = Item.builder()
+                .id(itemDto.getId())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .owner(user)
+                .build();
         return item;
     }
 

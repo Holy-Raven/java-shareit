@@ -9,9 +9,13 @@ import javax.persistence.*;
  * TODO Sprint add-controllers.
  */
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "items", schema = "public")
-@Getter @Setter @ToString
+@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Item {
 

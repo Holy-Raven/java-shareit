@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -21,10 +22,8 @@ public class UserServiceImpl implements UserService {
 
         User user = mapper.returnUser(userDto);
 
-        for (User userCheckEmail : userRepository.findAll()) {
-            if (userCheckEmail.getEmail().equals(user.getEmail())) {
-                throw new EmailExistException("there is already a user with an email " + user.getEmail());
-            }
+        if (!userRepository.findByEmail(user.getEmail()).isEmpty()) {
+            throw new EmailExistException("there is already a user with an email " + user.getEmail());
         }
 
         userRepository.save(user);
@@ -50,10 +49,10 @@ public class UserServiceImpl implements UserService {
         }
 
         if (user.getEmail() != null) {
-            for (User userCheckEmail : userRepository.findAll()) {
-                if (userCheckEmail.getEmail().equals(user.getEmail()) && userCheckEmail.getId() != userId) {
-                    throw new EmailExistException("there is already a user with an email " + user.getEmail());
-                }
+            List<User> findEmail = userRepository.findByEmail(user.getEmail());
+
+            if (!findEmail.isEmpty() && findEmail.get(0).getId() != userId) {
+                throw new EmailExistException("there is already a user with an email " + user.getEmail());
             }
             newUser.setEmail(user.getEmail());
         }

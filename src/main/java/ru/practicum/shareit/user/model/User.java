@@ -7,12 +7,13 @@ import javax.persistence.*;
 /**
  * TODO Sprint add-controllers.
  */
-
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "users", schema = "public")
-@Getter @Setter @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-
 public class User {
 
     @Id
