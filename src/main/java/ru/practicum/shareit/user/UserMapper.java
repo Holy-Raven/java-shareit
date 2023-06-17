@@ -18,7 +18,7 @@ public class UserMapper {
         return userDto;
     }
 
-    public User returnUser(UserDto userDto) {
+    public static User returnUser(UserDto userDto) {
         User user = User.builder()
                 .id(userDto.getId())
                 .email(userDto.getEmail())

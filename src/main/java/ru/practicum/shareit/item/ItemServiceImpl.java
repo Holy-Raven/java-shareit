@@ -39,12 +39,12 @@ public class ItemServiceImpl implements ItemService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
+        User user = userRepository.findById(userId).get();
+
 
         if (!itemRepository.existsById(itemId)) {
             throw new NotFoundException(Item.class, "Item id " + userId + " not found.");
         }
-
-        User user = userRepository.findById(userId).get();
         Item item = mapper.returnItem(itemDto, user);
 
         item.setId(itemId);
@@ -81,7 +81,6 @@ public class ItemServiceImpl implements ItemService {
 
         return mapper.returnItemDto(itemRepository.findById(userId).get());
     }
-
 
     @Override
     public List<ItemDto> getItemsUser(long userId) {

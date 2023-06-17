@@ -17,16 +17,16 @@ import java.time.LocalDateTime;
 @Builder
 public class BookingDto {
 
-    long id;
+    Long itemId;
 
     @NotNull(message = "start cannot be empty or contain spaces.")
     @FutureOrPresent(message = "start may be in the present or future")
-    LocalDateTime start;
+    private LocalDateTime start;
 
     @NotNull(message = "end may be in the future")
     @Future
-    LocalDateTime end;
+    private LocalDateTime end;
 
-    Status status;
+    private Status status;
 
 }

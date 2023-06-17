@@ -10,7 +10,7 @@ import java.util.List;
 @Component
 public class ItemMapper {
 
-    public ItemDto returnItemDto(Item item) {
+    public static ItemDto returnItemDto(Item item) {
         ItemDto itemDto = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -20,7 +20,7 @@ public class ItemMapper {
         return itemDto;
     }
 
-    public Item returnItem(ItemDto itemDto, User user) {
+    public static Item returnItem(ItemDto itemDto, User user) {
         Item item = Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
@@ -31,7 +31,7 @@ public class ItemMapper {
         return item;
     }
 
-    public List<ItemDto> returnItemDtoList(Iterable<Item> items) {
+    public static List<ItemDto> returnItemDtoList(Iterable<Item> items) {
         List<ItemDto> result = new ArrayList<>();
 
         for (Item item : items) {
@@ -40,5 +40,4 @@ public class ItemMapper {
 
         return result;
     }
-
 }
