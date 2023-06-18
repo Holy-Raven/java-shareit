@@ -18,7 +18,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final BookingMapper mapper;
 
     @Override
     public BookingOutDto addBooking(BookingDto bookingDto, Long booker) {
@@ -33,7 +32,7 @@ public class BookingServiceImpl implements BookingService {
         }
         User user = userRepository.findById(booker).get();
 
-        Booking booking = mapper.returnBooking(bookingDto);
+        Booking booking = BookingMapper.returnBooking(bookingDto);
         booking.setItem(item);
         booking.setBooker(user);
 
@@ -52,7 +51,7 @@ public class BookingServiceImpl implements BookingService {
 
         bookingRepository.save(booking);
 
-        return mapper.returnBookingDto(booking);
+        return BookingMapper.returnBookingDto(booking);
     }
 
     @Override
@@ -73,6 +72,6 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus(Status.REJECTED);
         }
 
-        return mapper.returnBookingDto(booking);
+        return BookingMapper.returnBookingDto(booking);
     }
 }

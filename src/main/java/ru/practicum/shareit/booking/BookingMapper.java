@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class BookingMapper {
 
-    public BookingOutDto returnBookingDto(Booking booking) {
+    public static BookingOutDto returnBookingDto(Booking booking) {
         BookingOutDto bookingOutDto = BookingOutDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
@@ -24,7 +24,7 @@ public class BookingMapper {
         return bookingOutDto;
     }
 
-    public Booking returnBooking(BookingDto bookingDto) {
+    public static Booking returnBooking(BookingDto bookingDto) {
 
         Booking booking = Booking.builder()
                 .start(bookingDto.getStart())
@@ -41,7 +41,7 @@ public class BookingMapper {
         return booking;
     }
 
-    public List<BookingOutDto> returnBookingDtoList(Iterable<Booking> bookings) {
+    public static List<BookingOutDto> returnBookingDtoList(Iterable<Booking> bookings) {
         List<BookingOutDto> result = new ArrayList<>();
 
         for (Booking booking : bookings) {

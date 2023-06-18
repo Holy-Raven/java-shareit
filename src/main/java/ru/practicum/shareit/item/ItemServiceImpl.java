@@ -15,7 +15,6 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final ItemMapper mapper;
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
@@ -26,11 +25,11 @@ public class ItemServiceImpl implements ItemService {
 
         User user = userRepository.findById(userId).get();
 
-        Item item = mapper.returnItem(itemDto, user);
+        Item item = ItemMapper.returnItem(itemDto, user);
 
         itemRepository.save(item);
 
-        return mapper.returnItemDto(item);
+        return ItemMapper.returnItemDto(item);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
         if (!itemRepository.existsById(itemId)) {
             throw new NotFoundException(Item.class, "Item id " + userId + " not found.");
         }
-        Item item = mapper.returnItem(itemDto, user);
+        Item item = ItemMapper.returnItem(itemDto, user);
 
         item.setId(itemId);
 
@@ -69,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemRepository.save(newItem);
 
-        return mapper.returnItemDto(newItem);
+        return ItemMapper.returnItemDto(newItem);
     }
 
     @Override
@@ -79,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
-        return mapper.returnItemDto(itemRepository.findById(userId).get());
+        return ItemMapper.returnItemDto(itemRepository.findById(userId).get());
     }
 
     @Override
@@ -89,7 +88,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
-        return mapper.returnItemDtoList(itemRepository.findByOwnerId(userId));
+        return ItemMapper.returnItemDtoList(itemRepository.findByOwnerId(userId));
     }
 
     @Override
@@ -98,7 +97,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.equals("")) {
             return Collections.emptyList();
         } else {
-            return mapper.returnItemDtoList(itemRepository.search(text));
+            return ItemMapper.returnItemDtoList(itemRepository.search(text));
         }
     }
 }

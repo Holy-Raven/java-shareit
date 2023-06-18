@@ -13,22 +13,21 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper mapper;
 
     @Override
     public UserDto addUser(UserDto userDto) {
 
-        User user = mapper.returnUser(userDto);
+        User user = UserMapper.returnUser(userDto);
 
         userRepository.save(user);
 
-        return mapper.returnUserDto(user);
+        return UserMapper.returnUserDto(user);
     }
 
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
 
-        User user = mapper.returnUser(userDto);
+        User user = UserMapper.returnUser(userDto);
         user.setId(userId);
 
         if (!userRepository.existsById(userId)) {
@@ -52,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(newUser);
 
-        return mapper.returnUserDto(newUser);
+        return UserMapper.returnUserDto(newUser);
     }
 
     @Override
@@ -70,13 +69,13 @@ public class UserServiceImpl implements UserService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         } else {
-            return mapper.returnUserDto(userRepository.findById(userId).get());
+            return UserMapper.returnUserDto(userRepository.findById(userId).get());
         }
     }
 
     @Override
     public List<UserDto> getAllUsers() {
 
-        return mapper.returnUserDtoList(userRepository.findAll());
+        return UserMapper.returnUserDtoList(userRepository.findAll());
     }
 }
