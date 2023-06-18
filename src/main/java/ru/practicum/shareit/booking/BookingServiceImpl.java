@@ -11,6 +11,9 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -20,17 +23,17 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
-    public BookingOutDto addBooking(BookingDto bookingDto, Long booker) {
+    public BookingOutDto addBooking(BookingDto bookingDto, Long userId) {
 
         if (!itemRepository.existsById(bookingDto.getItemId())) {
             throw new NotFoundException(Item.class, "Item id " + bookingDto.getItemId() + " not found.");
         }
         Item item = itemRepository.findById(bookingDto.getItemId()).get();
 
-        if (!userRepository.existsById(booker)) {
-            throw new NotFoundException(User.class, "User id " + booker + " not found.");
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
-        User user = userRepository.findById(booker).get();
+        User user = userRepository.findById(userId).get();
 
         Booking booking = BookingMapper.returnBooking(bookingDto);
         booking.setItem(item);
@@ -55,7 +58,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingOutDto approveBooking(Long userId, Long bookingId, Boolean approved ) {
+    public BookingOutDto approveBooking(Long userId, Long bookingId, Boolean approved) {
 
         if (!bookingRepository.existsById(bookingId)) {
             throw new NotFoundException(Booking.class, "Booking id " + bookingId + " not found.");
@@ -72,11 +75,12 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus(Status.REJECTED);
         }
 
+        bookingRepository.save(booking);
         return BookingMapper.returnBookingDto(booking);
     }
 
     @Override
-    public BookingOutDto getBookingById(Long bookingId, Long userId) {
+    public BookingOutDto getBookingById(Long userId, Long bookingId) {
 
         if (!bookingRepository.existsById(bookingId)) {
             throw new NotFoundException(Booking.class, "Booking id " + bookingId + " not found.");
@@ -93,4 +97,39 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("To get information about the reservation, the car of the reservation or the owner of the item can");
         }
     }
+
+    @Override
+    public List<BookingOutDto> getAllBookingsByOwnerId(Long userId, String state) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+        List<Booking> bookings;
+        State bookingState = State.valueOf(state);
+
+        switch (bookingState) {
+            case ALL:
+                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                break;
+            case CURRENT:
+                bookings = bookingRepository.findAllByBookerIdAndStartOrderByStartDesc(userId, LocalDateTime.now());
+                break;
+            case PAST:
+                bookings = bookingRepository.findAllByBookerIdAndStartBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                break;
+            case FUTURE:
+                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                break;
+            case WAITING:
+                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                break;
+            case REJECTED:
+                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                break;
+            default:
+                throw new ValidationException("Unknown state is specified: " + state);
+        }
+        return BookingMapper.returnBookingDtoList(bookings);
+    }
 }
+

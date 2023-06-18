@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * TODO Sprint add-bookings.
@@ -35,6 +36,7 @@ public class BookingController {
                                         @PathVariable Long bookingId,
                                         @RequestParam Boolean approved) {
 
+        log.info("User {}, changed the status booking {}", userId, bookingId);
         return bookingService.approveBooking(userId, bookingId, approved);
     }
 
@@ -42,7 +44,17 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingOutDto getBookingById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                         @PathVariable Long bookingId) {
-        return bookingService.getBookingById(bookingId, userId);
+
+        log.info("Get booking {}", bookingId);
+        return bookingService.getBookingById(userId, bookingId);
+    }
+
+    @GetMapping
+    public List<BookingOutDto> getAllBookingsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                       @RequestParam(defaultValue = "ALL", required = false) String state) {
+
+        log.info("Get all bookings by owner Id {}", userId);
+        return bookingService.getAllBookingsByOwnerId(userId, state);
     }
 
 
