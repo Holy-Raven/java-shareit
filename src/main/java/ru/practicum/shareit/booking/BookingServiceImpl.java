@@ -74,4 +74,23 @@ public class BookingServiceImpl implements BookingService {
 
         return BookingMapper.returnBookingDto(booking);
     }
+
+    @Override
+    public BookingOutDto getBookingById(Long bookingId, Long userId) {
+
+        if (!bookingRepository.existsById(bookingId)) {
+            throw new NotFoundException(Booking.class, "Booking id " + bookingId + " not found.");
+        }
+        Booking booking = bookingRepository.findById(bookingId).get();
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+
+        if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
+            return BookingMapper.returnBookingDto(booking);
+        } else {
+            throw new ValidationException("To get information about the reservation, the car of the reservation or the owner of the item can");
+        }
+    }
 }
