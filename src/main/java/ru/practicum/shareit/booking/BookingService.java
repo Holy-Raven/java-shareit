@@ -7,4 +7,6 @@ public interface BookingService {
 
     BookingOutDto addBooking(BookingDto bookingDto, Long booker);
 
+    BookingOutDto approveBooking(Long userId, Long bookingId, Boolean approved);
+
 }

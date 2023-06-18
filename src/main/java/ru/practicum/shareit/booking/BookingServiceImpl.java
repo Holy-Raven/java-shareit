@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.type.LocalDateTimeType;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
@@ -52,6 +51,27 @@ public class BookingServiceImpl implements BookingService {
         }
 
         bookingRepository.save(booking);
+
+        return mapper.returnBookingDto(booking);
+    }
+
+    @Override
+    public BookingOutDto approveBooking(Long userId, Long bookingId, Boolean approved ) {
+
+        if (!bookingRepository.existsById(bookingId)) {
+            throw new NotFoundException(Booking.class, "Booking id " + bookingId + " not found.");
+        }
+        Booking booking = bookingRepository.findById(bookingId).get();
+
+        if (booking.getItem().getOwner().getId() != userId) {
+            throw new ValidationException("Only owner items can change booking status");
+        }
+
+        if (approved) {
+            booking.setStatus(Status.APPROVED);
+        } else {
+            booking.setStatus(Status.REJECTED);
+        }
 
         return mapper.returnBookingDto(booking);
     }
