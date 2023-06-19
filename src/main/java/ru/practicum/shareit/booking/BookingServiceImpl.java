@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.UnsupportedStatusException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
@@ -40,10 +41,10 @@ public class BookingServiceImpl implements BookingService {
         booking.setBooker(user);
 
         if (item.getOwner().equals(user)) {
-            throw new ValidationException("Owner can't book his item");
+            throw new NotFoundException(User.class, "Owner " + userId + " can't book his item");
         }
         if (!item.getAvailable()) {
-            throw new ValidationException("Item is booked");
+            throw new ValidationException("Item " + item.getId() + " is booked");
         }
         if (booking.getStart().isAfter(booking.getEnd())) {
             throw new ValidationException("Start cannot be later than end");
@@ -66,10 +67,13 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).get();
 
         if (booking.getItem().getOwner().getId() != userId) {
-            throw new ValidationException("Only owner items can change booking status");
+            throw new NotFoundException(User.class, "Only owner " + userId + " items can change booking status");
         }
 
         if (approved) {
+            if (booking.getStatus().equals(Status.APPROVED)) {
+                throw new ValidationException("Incorrect status update request");
+            }
             booking.setStatus(Status.APPROVED);
         } else {
             booking.setStatus(Status.REJECTED);
@@ -94,18 +98,25 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
             return BookingMapper.returnBookingDto(booking);
         } else {
-            throw new ValidationException("To get information about the reservation, the car of the reservation or the owner of the item can");
+            throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation or the owner {} "+ userId + "of the item can" );
         }
     }
 
     @Override
-    public List<BookingOutDto> getAllBookingsByOwnerId(Long userId, String state) {
+    public List<BookingOutDto> getAllBookingsByBookerId(Long userId, String state) {
 
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
-        List<Booking> bookings;
-        State bookingState = State.valueOf(state);
+
+        List<Booking> bookings = null;
+        State bookingState;
+
+        try {
+            bookingState = State.valueOf(state);
+        } catch (Exception e){
+            throw new UnsupportedStatusException("Unknown state: " + state);
+        }
 
         switch (bookingState) {
             case ALL:
@@ -126,9 +137,50 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
                 break;
-            default:
-                throw new ValidationException("Unknown state is specified: " + state);
+
         }
+        return BookingMapper.returnBookingDtoList(bookings);
+    }
+    @Override
+    public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(Long userId, String state) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+        if (itemRepository.findByOwnerId(userId).isEmpty()){
+            throw new ValidationException("User does not have items to booking");
+        }
+
+        List<Booking> bookings = null;
+        State bookingState;
+
+        try {
+            bookingState = State.valueOf(state);
+        } catch (Exception e){
+            throw new UnsupportedStatusException("Unknown state: " + state);
+        }
+
+        switch (bookingState) {
+            case ALL:
+                bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
+                break;
+            case CURRENT:
+                bookings = bookingRepository.findAllByItemOwnerIdAndStartOrderByStartDesc(userId, LocalDateTime.now());
+                break;
+            case PAST:
+                bookings = bookingRepository.findAllByItemOwnerIdAndStartBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                break;
+            case FUTURE:
+                bookings = bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                break;
+            case WAITING:
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                break;
+            case REJECTED:
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                break;
+        }
+
         return BookingMapper.returnBookingDtoList(bookings);
     }
 }

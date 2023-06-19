@@ -72,13 +72,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(long userId) {
+    public ItemDto getItemById(long itemId) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        if (!itemRepository.existsById(itemId)) {
+            throw new NotFoundException(User.class, "User id " + itemId + " not found.");
         }
 
-        return ItemMapper.returnItemDto(itemRepository.findById(userId).get());
+        return ItemMapper.returnItemDto(itemRepository.findById(itemId).get());
     }
 
     @Override

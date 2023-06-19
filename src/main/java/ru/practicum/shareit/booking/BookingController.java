@@ -40,7 +40,6 @@ public class BookingController {
         return bookingService.approveBooking(userId, bookingId, approved);
     }
 
-
     @GetMapping("/{bookingId}")
     public BookingOutDto getBookingById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                         @PathVariable Long bookingId) {
@@ -50,12 +49,18 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingOutDto> getAllBookingsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                       @RequestParam(defaultValue = "ALL", required = false) String state) {
+    public List<BookingOutDto> getAllBookingsByBookerId(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                        @RequestParam(defaultValue = "ALL", required = false) String state) {
 
-        log.info("Get all bookings by owner Id {}", userId);
-        return bookingService.getAllBookingsByOwnerId(userId, state);
+        log.info("Get all bookings by booker Id {}", userId);
+        return bookingService.getAllBookingsByBookerId(userId, state);
     }
 
+    @GetMapping("/owner")
+    public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                                  @RequestParam(defaultValue = "ALL", required = false) String state) {
 
+        log.info("Get all bookings for all items by owner Id {}", userId);
+        return bookingService.getAllBookingsForAllItemsByOwnerId(userId, state);
+    }
 }
