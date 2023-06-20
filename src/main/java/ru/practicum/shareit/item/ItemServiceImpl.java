@@ -108,17 +108,17 @@ public class ItemServiceImpl implements ItemService {
 //                itemDto.setNextBooking(BookingMapper.returnBookingDto(nextBookings.get(0)));
 //            }
 
-            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBefore(itemId, Status.APPROVED, LocalDateTime.now());
-            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfter(itemId,  Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId,  Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
-                itemDto.setLastBooking(BookingMapper.returnBookingDto(lastBooking.get()));
+                itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
             } else {
                 itemDto.setLastBooking(null);
             }
 
             if (nextBooking.isPresent()) {
-                itemDto.setNextBooking(BookingMapper.returnBookingDto(nextBooking.get()));
+                itemDto.setNextBooking(BookingMapper.returnBookingShortDto(nextBooking.get()));
             } else {
                 itemDto.setNextBooking(null);
             }

@@ -17,6 +17,7 @@ public class ItemMapper {
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .build();
+
         return itemDto;
     }
 
