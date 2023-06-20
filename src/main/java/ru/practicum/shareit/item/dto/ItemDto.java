@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.*;
+import ru.practicum.shareit.booking.dto.BookingOutDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,5 +26,9 @@ public class ItemDto {
 
     @NotNull(message = "Available cannot be empty")
     private Boolean available;
+
+    private BookingOutDto lastBooking;
+
+    private BookingOutDto nextBooking;
 
 }

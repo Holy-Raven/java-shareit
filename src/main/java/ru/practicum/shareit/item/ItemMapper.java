@@ -37,7 +37,6 @@ public class ItemMapper {
         for (Item item : items) {
             result.add(returnItemDto(item));
         }
-
         return result;
     }
 }
