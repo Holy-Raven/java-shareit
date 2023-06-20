@@ -77,7 +77,6 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.returnItemDto(newItem);
     }
 
-
     @Override
     public ItemDto getItemById(long itemId, long userId) {
 
@@ -94,22 +93,41 @@ public class ItemServiceImpl implements ItemService {
                 throw new NotFoundException(User.class, "User id " + itemId + " not found.");
             }
 
-//            List<Booking> lastBookings =
-//                    bookingRepository.findByItemIdAndBookerIdAndStatusAndStartBeforeOrderByStartDesc(itemId, userId, Status.APPROVED, LocalDateTime.now());
-//
-//            List<Booking> nextBookings =
-//                    bookingRepository.findByItemIdAndBookerIdAndStatusAndStartAfterOrderByStartDesc(itemId, userId, Status.APPROVED, LocalDateTime.now());
-//
-//            if (!lastBookings.isEmpty()) {
-//                itemDto.setLastBooking(BookingMapper.returnBookingDto(lastBookings.get(0)));
-//            }
-//
-//            if (!nextBookings.isEmpty()) {
-//                itemDto.setNextBooking(BookingMapper.returnBookingDto(nextBookings.get(0)));
-//            }
+             if (item.getOwner().getId() == userId) {
 
-            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
-            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId,  Status.APPROVED, LocalDateTime.now());
+                 Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
+
+                 Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
+
+                 if (lastBooking.isPresent()) {
+                     itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
+                 } else {
+                     itemDto.setLastBooking(null);
+                 }
+
+                 if (nextBooking.isPresent()) {
+                     itemDto.setNextBooking(BookingMapper.returnBookingShortDto(nextBooking.get()));
+                 } else {
+                     itemDto.setNextBooking(null);
+                 }
+             }
+        }
+            return itemDto;
+    }
+
+    @Override
+    public List<ItemDto> getItemsUser(long userId) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+
+        List<ItemDto> resultList = new ArrayList<>();
+
+        for (ItemDto itemDto : ItemMapper.returnItemDtoList(itemRepository.findByOwnerId(userId))) {
+
+            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
                 itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
@@ -123,18 +141,11 @@ public class ItemServiceImpl implements ItemService {
                 itemDto.setNextBooking(null);
             }
 
-        }
-            return itemDto;
-    }
+            resultList.add(itemDto);
 
-    @Override
-    public List<ItemDto> getItemsUser(long userId) {
-
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
 
-        return ItemMapper.returnItemDtoList(itemRepository.findByOwnerId(userId));
+        return resultList;
     }
 
     @Override

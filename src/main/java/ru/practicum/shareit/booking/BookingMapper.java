@@ -34,8 +34,6 @@ public class BookingMapper {
         return bookingShortDto;
     }
 
-
-
     public static Booking returnBooking(BookingDto bookingDto) {
 
         Booking booking = Booking.builder()
@@ -48,8 +46,6 @@ public class BookingMapper {
         } else {
             booking.setStatus(bookingDto.getStatus());
         }
-
-
         return booking;
     }
 
@@ -59,7 +55,6 @@ public class BookingMapper {
         for (Booking booking : bookings) {
             result.add(returnBookingDto(booking));
         }
-
         return result;
     }
 
