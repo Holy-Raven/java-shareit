@@ -19,12 +19,12 @@ public class BookingDto {
 
     Long itemId;
 
-    @NotNull(message = "start cannot be empty or contain spaces.")
+    @NotNull(message = "start cannot be empty.")
     @FutureOrPresent(message = "start may be in the present or future")
     private LocalDateTime start;
 
-    @NotNull(message = "end may be in the future")
-    @Future
+    @NotNull(message = "end cannot be empty.")
+    @Future(message = "end may be in the future")
     private LocalDateTime end;
 
     private Status status;

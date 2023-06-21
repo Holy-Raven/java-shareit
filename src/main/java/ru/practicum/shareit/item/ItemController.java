@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
+import javax.xml.bind.ValidationException;
 import java.util.List;
 
 
@@ -24,7 +26,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                        @RequestBody @Valid ItemDto itemDto) {
 
         log.info("User {}, add new item {}", userId, itemDto.getName());
@@ -59,5 +61,16 @@ public class ItemController {
 
         log.info("Get item with key substring {}", text);
         return itemService.searchItem(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                 @PathVariable long itemId,
+                                 @RequestBody @Valid CommentDto commentDto) throws ValidationException {
+
+        System.out.println("111");
+
+    log.info("User {} add comment for Item {}", userId, itemId);
+    return itemService.addComment(userId, itemId, commentDto);
     }
 }

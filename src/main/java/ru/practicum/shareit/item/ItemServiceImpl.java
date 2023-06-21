@@ -7,10 +7,12 @@ import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.User;
 
+import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -21,6 +23,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
@@ -87,32 +90,37 @@ public class ItemServiceImpl implements ItemService {
 
         ItemDto itemDto = ItemMapper.returnItemDto(item);
 
-        if (userId > 0) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(User.class, "User id " + itemId + " not found.");
+        }
 
-            if (!userRepository.existsById(userId)) {
-                throw new NotFoundException(User.class, "User id " + itemId + " not found.");
+        if (item.getOwner().getId() == userId) {
+
+            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
+
+            if (lastBooking.isPresent()) {
+                 itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
+            } else {
+                itemDto.setLastBooking(null);
             }
 
-             if (item.getOwner().getId() == userId) {
-
-                 Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
-
-                 Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
-
-                 if (lastBooking.isPresent()) {
-                     itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
-                 } else {
-                     itemDto.setLastBooking(null);
-                 }
-
-                 if (nextBooking.isPresent()) {
-                     itemDto.setNextBooking(BookingMapper.returnBookingShortDto(nextBooking.get()));
-                 } else {
-                     itemDto.setNextBooking(null);
-                 }
-             }
+            if (nextBooking.isPresent()) {
+                itemDto.setNextBooking(BookingMapper.returnBookingShortDto(nextBooking.get()));
+            } else {
+                itemDto.setNextBooking(null);
+            }
         }
-            return itemDto;
+
+        List<Comment> commentList = commentRepository.findByItemId(itemId);
+
+        if (!commentList.isEmpty()) {
+            itemDto.setComments(CommentMapper.returnICommentDtoList(commentList));
+        } else {
+            itemDto.setComments(Collections.emptyList());
+        }
+
+        return itemDto;
     }
 
     @Override
@@ -140,9 +148,18 @@ public class ItemServiceImpl implements ItemService {
             } else {
                 itemDto.setNextBooking(null);
             }
-
             resultList.add(itemDto);
+        }
 
+        for (ItemDto itemDto : resultList) {
+
+            List<Comment> commentList = commentRepository.findByItemId(itemDto.getId());
+
+            if (!commentList.isEmpty()) {
+                itemDto.setComments(CommentMapper.returnICommentDtoList(commentList));
+            } else {
+                itemDto.setComments(Collections.emptyList());
+            }
         }
 
         return resultList;
@@ -156,5 +173,32 @@ public class ItemServiceImpl implements ItemService {
         } else {
             return ItemMapper.returnItemDtoList(itemRepository.search(text));
         }
+    }
+
+    @Override
+    public CommentDto addComment(long userId, long itemId, CommentDto commentDto) throws ValidationException {
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(User.class, "User id " + userId + " not found.");
+        }
+        User user = userRepository.findById(userId).get();
+
+        if (!itemRepository.existsById(itemId)) {
+            throw new NotFoundException(Item.class, "Item id " + userId + " not found.");
+        }
+        Item item = itemRepository.findById(itemId).get();
+
+        LocalDateTime dateTime = LocalDateTime.now();
+
+        Optional<Booking> booking = bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndEndBefore(itemId, userId, Status.APPROVED, dateTime);
+
+        if (booking.isEmpty()) {
+            throw new ValidationException("User " + userId + " not booking this item " + itemId);
+        }
+
+        Comment comment = CommentMapper.returnComment(commentDto, item, user, dateTime);
+        commentRepository.save(comment);
+
+        return CommentMapper.returnCommentDto(comment);
     }
 }
