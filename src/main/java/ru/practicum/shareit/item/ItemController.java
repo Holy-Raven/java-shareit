@@ -27,7 +27,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                       @RequestBody @Valid ItemDto itemDto) {
+                           @RequestBody @Valid ItemDto itemDto) {
 
         log.info("User {}, add new item {}", userId, itemDto.getName());
         return itemService.addItem(userId, itemDto);
@@ -64,11 +64,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
-                                 @PathVariable long itemId,
-                                 @RequestBody @Valid CommentDto commentDto) throws ValidationException {
-
-        System.out.println("111");
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                 @PathVariable Long itemId,
+                                 @RequestBody @Valid CommentDto commentDto) {
 
     log.info("User {} add comment for Item {}", userId, itemId);
     return itemService.addComment(userId, itemId, commentDto);

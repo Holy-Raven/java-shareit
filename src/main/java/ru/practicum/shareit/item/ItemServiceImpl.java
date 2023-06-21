@@ -7,12 +7,12 @@ import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.User;
 
-import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -112,7 +112,7 @@ public class ItemServiceImpl implements ItemService {
             }
         }
 
-        List<Comment> commentList = commentRepository.findByItemId(itemId);
+        List<Comment> commentList = commentRepository.findAllByItemId(itemId);
 
         if (!commentList.isEmpty()) {
             itemDto.setComments(CommentMapper.returnICommentDtoList(commentList));
@@ -148,12 +148,13 @@ public class ItemServiceImpl implements ItemService {
             } else {
                 itemDto.setNextBooking(null);
             }
+
             resultList.add(itemDto);
         }
 
         for (ItemDto itemDto : resultList) {
 
-            List<Comment> commentList = commentRepository.findByItemId(itemDto.getId());
+            List<Comment> commentList = commentRepository.findAllByItemId(itemDto.getId());
 
             if (!commentList.isEmpty()) {
                 itemDto.setComments(CommentMapper.returnICommentDtoList(commentList));
@@ -176,7 +177,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public CommentDto addComment(long userId, long itemId, CommentDto commentDto) throws ValidationException {
+    public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
 
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
@@ -184,7 +185,7 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId).get();
 
         if (!itemRepository.existsById(itemId)) {
-            throw new NotFoundException(Item.class, "Item id " + userId + " not found.");
+            throw new NotFoundException(Item.class, "Item id " + itemId + " not found.");
         }
         Item item = itemRepository.findById(itemId).get();
 
