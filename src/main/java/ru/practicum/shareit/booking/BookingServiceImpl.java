@@ -98,7 +98,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
             return BookingMapper.returnBookingDto(booking);
         } else {
-            throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation or the owner {} "+ userId + "of the item can" );
+            throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation or the owner {} " + userId + "of the item can");
         }
     }
 
@@ -141,6 +141,7 @@ public class BookingServiceImpl implements BookingService {
         }
         return BookingMapper.returnBookingDtoList(bookings);
     }
+
     @Override
     public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(Long userId, String state) {
 

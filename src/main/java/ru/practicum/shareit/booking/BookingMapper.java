@@ -24,6 +24,7 @@ public class BookingMapper {
                 .build();
         return bookingOutDto;
     }
+
     public static BookingShortDto returnBookingShortDto(Booking booking) {
         BookingShortDto bookingShortDto = BookingShortDto.builder()
                 .id(booking.getId())
