@@ -15,7 +15,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "items", schema = "public")
-@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Item {
 
@@ -24,15 +23,16 @@ public class Item {
     @EqualsAndHashCode.Include
     private long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "is_available")
     private Boolean available;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 

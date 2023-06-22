@@ -41,7 +41,7 @@ public class BookingMapper {
                 .end(bookingDto.getEnd())
                 .build();
 
-        if (bookingDto.getStatus() == null){
+        if (bookingDto.getStatus() == null) {
             booking.setStatus(Status.WAITING);
         } else {
             booking.setStatus(bookingDto.getStatus());
@@ -57,7 +57,4 @@ public class BookingMapper {
         }
         return result;
     }
-
-
-
 }

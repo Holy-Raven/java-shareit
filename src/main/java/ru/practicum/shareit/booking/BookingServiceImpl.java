@@ -114,7 +114,7 @@ public class BookingServiceImpl implements BookingService {
 
         try {
             bookingState = State.valueOf(state);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new UnsupportedStatusException("Unknown state: " + state);
         }
 
@@ -147,7 +147,7 @@ public class BookingServiceImpl implements BookingService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(User.class, "User id " + userId + " not found.");
         }
-        if (itemRepository.findByOwnerId(userId).isEmpty()){
+        if (itemRepository.findByOwnerId(userId).isEmpty()) {
             throw new ValidationException("User does not have items to booking");
         }
 
@@ -156,7 +156,7 @@ public class BookingServiceImpl implements BookingService {
 
         try {
             bookingState = State.valueOf(state);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new UnsupportedStatusException("Unknown state: " + state);
         }
 

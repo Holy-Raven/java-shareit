@@ -33,7 +33,6 @@ public class UserMapper {
         for (User user : users) {
             result.add(returnUserDto(user));
         }
-
         return result;
     }
 

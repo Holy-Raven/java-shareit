@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
  * TODO Sprint add-bookings.
  */
 
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -33,17 +32,14 @@ public class Booking {
     LocalDateTime end;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
     @JoinColumn(name = "item_id", nullable = false)
     Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
     @JoinColumn(name = "booker_id", nullable = false)
     User booker;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     Status status;
-
 }

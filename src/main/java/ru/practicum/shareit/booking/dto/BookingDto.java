@@ -28,5 +28,4 @@ public class BookingDto {
     private LocalDateTime end;
 
     private Status status;
-
 }

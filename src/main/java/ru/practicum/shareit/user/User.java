@@ -21,6 +21,7 @@ public class User {
     @EqualsAndHashCode.Include
     private long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "email", unique = true)

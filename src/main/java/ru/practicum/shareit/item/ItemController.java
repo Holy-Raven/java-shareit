@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
-import javax.xml.bind.ValidationException;
 import java.util.List;
 
 
@@ -68,7 +67,7 @@ public class ItemController {
                                  @PathVariable Long itemId,
                                  @RequestBody @Valid CommentDto commentDto) {
 
-    log.info("User {} add comment for Item {}", userId, itemId);
-    return itemService.addComment(userId, itemId, commentDto);
+        log.info("User {} add comment for Item {}", userId, itemId);
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }

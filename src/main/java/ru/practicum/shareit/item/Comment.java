@@ -20,8 +20,10 @@ public class Comment {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @Column(name = "text", nullable = false)
     private String text;
 
+    @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
     @ManyToOne(fetch = FetchType.LAZY)
