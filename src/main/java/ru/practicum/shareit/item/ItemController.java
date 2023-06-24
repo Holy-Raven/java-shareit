@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.practicum.shareit.util.Constant.HEADER_USER;
 
 /**
  * TODO Sprint add-controllers.
@@ -25,7 +26,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto addItem(@RequestHeader(HEADER_USER) Long userId,
                            @RequestBody @Valid ItemDto itemDto) {
 
         log.info("User {}, add new item {}", userId, itemDto.getName());
@@ -33,7 +34,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto updateItem(@RequestHeader(HEADER_USER) Long userId,
                               @RequestBody ItemDto itemDto,
                               @PathVariable Long itemId) {
 
@@ -42,14 +43,14 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto getItem(@RequestHeader(HEADER_USER) Long userId,
                            @PathVariable Long itemId) {
         log.info("Get item {}", itemId);
         return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAllItemsUser(@RequestHeader(HEADER_USER) Long userId) {
 
         log.info("List items User {}", userId);
         return itemService.getItemsUser(userId);
@@ -63,7 +64,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public CommentDto addComment(@RequestHeader(HEADER_USER) Long userId,
                                  @PathVariable Long itemId,
                                  @RequestBody @Valid CommentDto commentDto) {
 

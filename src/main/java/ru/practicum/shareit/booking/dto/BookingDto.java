@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 public class BookingDto {
 
-    Long itemId;
+    private Long itemId;
 
     @NotNull(message = "start cannot be empty.")
     @FutureOrPresent(message = "start may be in the present or future")

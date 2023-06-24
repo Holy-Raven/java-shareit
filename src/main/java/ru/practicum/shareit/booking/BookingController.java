@@ -10,6 +10,8 @@ import ru.practicum.shareit.booking.dto.BookingOutDto;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.practicum.shareit.util.Constant.HEADER_USER;
+
 /**
  * TODO Sprint add-bookings.
  */
@@ -24,7 +26,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingOutDto addBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public BookingOutDto addBooking(@RequestHeader(HEADER_USER) Long userId,
                                     @RequestBody @Valid BookingDto bookingDto) {
 
         log.info("User {}, add new booking {}", userId, "bookingDto.getName()");
@@ -32,7 +34,7 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingOutDto approveBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public BookingOutDto approveBooking(@RequestHeader(HEADER_USER) Long userId,
                                         @PathVariable Long bookingId,
                                         @RequestParam Boolean approved) {
 
@@ -41,7 +43,7 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public BookingOutDto getBookingById(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public BookingOutDto getBookingById(@RequestHeader(HEADER_USER) Long userId,
                                         @PathVariable Long bookingId) {
 
         log.info("Get booking {}", bookingId);
@@ -49,7 +51,7 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingOutDto> getAllBookingsByBookerId(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public List<BookingOutDto> getAllBookingsByBookerId(@RequestHeader(HEADER_USER) Long userId,
                                                         @RequestParam(defaultValue = "ALL", required = false) String state) {
 
         log.info("Get all bookings by booker Id {}", userId);
@@ -57,7 +59,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(@RequestHeader(HEADER_USER) Long userId,
                                                                   @RequestParam(defaultValue = "ALL", required = false) String state) {
 
         log.info("Get all bookings for all items by owner Id {}", userId);

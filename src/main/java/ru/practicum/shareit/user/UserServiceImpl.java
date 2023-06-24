@@ -2,38 +2,39 @@ package ru.practicum.shareit.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.EmailExistException;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.util.UnionService;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UnionService unionService;
 
+    @Transactional
     @Override
     public UserDto addUser(UserDto userDto) {
 
         User user = UserMapper.returnUser(userDto);
-
         userRepository.save(user);
 
         return UserMapper.returnUserDto(user);
     }
 
+    @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
 
         User user = UserMapper.returnUser(userDto);
         user.setId(userId);
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
-
+        unionService.checkUser(userId);
         User newUser = userRepository.findById(userId).get();
 
         if (user.getName() != null) {
@@ -54,25 +55,23 @@ public class UserServiceImpl implements UserService {
         return UserMapper.returnUserDto(newUser);
     }
 
+    @Transactional
     @Override
     public void deleteUser(long userId) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
         userRepository.deleteById(userId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserDto getUserById(long userId) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        } else {
-            return UserMapper.returnUserDto(userRepository.findById(userId).get());
-        }
+        unionService.checkUser(userId);
+        return UserMapper.returnUserDto(userRepository.findById(userId).get());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<UserDto> getAllUsers() {
 

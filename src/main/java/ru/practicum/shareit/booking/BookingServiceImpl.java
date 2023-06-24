@@ -2,38 +2,38 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.UnsupportedStatusException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.util.UnionService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final UnionService unionService;
 
+    @Transactional
     @Override
-    public BookingOutDto addBooking(BookingDto bookingDto, Long userId) {
+    public BookingOutDto addBooking(BookingDto bookingDto, long userId) {
 
-        if (!itemRepository.existsById(bookingDto.getItemId())) {
-            throw new NotFoundException(Item.class, "Item id " + bookingDto.getItemId() + " not found.");
-        }
+        unionService.checkItem(bookingDto.getItemId());
         Item item = itemRepository.findById(bookingDto.getItemId()).get();
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
         User user = userRepository.findById(userId).get();
 
         Booking booking = BookingMapper.returnBooking(bookingDto);
@@ -58,12 +58,11 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.returnBookingDto(booking);
     }
 
+    @Transactional
     @Override
-    public BookingOutDto approveBooking(Long userId, Long bookingId, Boolean approved) {
+    public BookingOutDto approveBooking(long userId, long bookingId, Boolean approved) {
 
-        if (!bookingRepository.existsById(bookingId)) {
-            throw new NotFoundException(Booking.class, "Booking id " + bookingId + " not found.");
-        }
+        unionService.checkBooking(bookingId);
         Booking booking = bookingRepository.findById(bookingId).get();
 
         if (booking.getItem().getOwner().getId() != userId) {
@@ -83,17 +82,14 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.returnBookingDto(booking);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public BookingOutDto getBookingById(Long userId, Long bookingId) {
+    public BookingOutDto getBookingById(long userId, long bookingId) {
 
-        if (!bookingRepository.existsById(bookingId)) {
-            throw new NotFoundException(Booking.class, "Booking id " + bookingId + " not found.");
-        }
+        unionService.checkBooking(bookingId);
         Booking booking = bookingRepository.findById(bookingId).get();
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
 
         if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
             return BookingMapper.returnBookingDto(booking);
@@ -102,21 +98,15 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<BookingOutDto> getAllBookingsByBookerId(Long userId, String state) {
+    public List<BookingOutDto> getAllBookingsByBookerId(long userId, String state) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
 
         List<Booking> bookings = null;
-        State bookingState;
 
-        try {
-            bookingState = State.valueOf(state);
-        } catch (Exception e) {
-            throw new UnsupportedStatusException("Unknown state: " + state);
-        }
+        State bookingState = State.getEnumValue(state);
 
         switch (bookingState) {
             case ALL:
@@ -142,24 +132,19 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.returnBookingDtoList(bookings);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(Long userId, String state) {
+    public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(long userId, String state) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
+
         if (itemRepository.findByOwnerId(userId).isEmpty()) {
             throw new ValidationException("User does not have items to booking");
         }
 
         List<Booking> bookings = null;
-        State bookingState;
 
-        try {
-            bookingState = State.valueOf(state);
-        } catch (Exception e) {
-            throw new UnsupportedStatusException("Unknown state: " + state);
-        }
+        State bookingState = State.getEnumValue(state);
 
         switch (bookingState) {
             case ALL:

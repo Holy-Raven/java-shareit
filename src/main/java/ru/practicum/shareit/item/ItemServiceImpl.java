@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -12,11 +13,13 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.util.UnionService;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
@@ -24,13 +27,13 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final UnionService unionService;
 
+    @Transactional
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
 
         User user = userRepository.findById(userId).get();
 
@@ -41,18 +44,14 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.returnItemDto(item);
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
         User user = userRepository.findById(userId).get();
 
-
-        if (!itemRepository.existsById(itemId)) {
-            throw new NotFoundException(Item.class, "Item id " + userId + " not found.");
-        }
+        unionService.checkItem(itemId);
         Item item = ItemMapper.returnItem(itemDto, user);
 
         item.setId(itemId);
@@ -80,19 +79,16 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.returnItemDto(newItem);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ItemDto getItemById(long itemId, long userId) {
 
-        if (!itemRepository.existsById(itemId)) {
-            throw new NotFoundException(Item.class, "Item id " + itemId + " not found.");
-        }
+        unionService.checkItem(itemId);
         Item item = itemRepository.findById(itemId).get();
 
         ItemDto itemDto = ItemMapper.returnItemDto(item);
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + itemId + " not found.");
-        }
+        unionService.checkUser(userId);
 
         if (item.getOwner().getId() == userId) {
 
@@ -123,12 +119,11 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ItemDto> getItemsUser(long userId) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
 
         List<ItemDto> resultList = new ArrayList<>();
 
@@ -166,6 +161,7 @@ public class ItemServiceImpl implements ItemService {
         return resultList;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public  List<ItemDto> searchItem(String text) {
 
@@ -176,17 +172,14 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Transactional
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(User.class, "User id " + userId + " not found.");
-        }
+        unionService.checkUser(userId);
         User user = userRepository.findById(userId).get();
 
-        if (!itemRepository.existsById(itemId)) {
-            throw new NotFoundException(Item.class, "Item id " + itemId + " not found.");
-        }
+        unionService.checkItem(itemId);
         Item item = itemRepository.findById(itemId).get();
 
         LocalDateTime dateTime = LocalDateTime.now();

@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 public class ItemDto {
 
-    private long id;
+    private Long id;
 
     @NotNull(message = "Name cannot be empty or contain spaces.")
     @NotBlank(message = "Name cannot be empty or contain spaces.")
