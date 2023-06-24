@@ -16,7 +16,7 @@ public enum State {
 
     REJECTED;
 
-    public static State getEnumValue(String state){
+    public static State getEnumValue(String state) {
 
     try {
         return State.valueOf(state);
