@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class UserDto {
 
-    private long id;
+    private Long id;
 
     @NotNull(message = "Login cannot be empty or contain spaces.")
     @NotBlank(message = "Login cannot be empty or contain spaces.")

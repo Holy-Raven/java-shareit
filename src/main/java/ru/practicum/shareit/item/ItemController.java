@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
+import static ru.practicum.shareit.util.Constant.HEADER_USER;
 
 /**
  * TODO Sprint add-controllers.
@@ -24,53 +24,51 @@ import static java.util.stream.Collectors.toList;
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemMapper mapper;
 
     @PostMapping
-    public ItemDto add(@RequestHeader("X-Sharer-User-Id") long userId,
-                       @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(HEADER_USER) Long userId,
+                           @RequestBody @Valid ItemDto itemDto) {
 
-        Item item = mapper.returnItem(itemDto);
-        itemService.addItem(userId, item);
-        log.info("User {}, add new item {}", userId, item.getName());
-        return mapper.returnItemDto(item);
+        log.info("User {}, add new item {}", userId, itemDto.getName());
+        return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto updateItem(@RequestHeader(HEADER_USER) Long userId,
                               @RequestBody ItemDto itemDto,
                               @PathVariable Long itemId) {
 
-        Item item = mapper.returnItem(itemDto);
-        Item updateItem = itemService.updateItem(item, itemId, userId);
-        log.info("User {}, update item {}", userId, updateItem.getName());
-        return mapper.returnItemDto(updateItem);
+        log.info("User {}, update item {}", userId, itemDto.getName());
+        return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getUser(@PathVariable Long itemId) {
-
+    public ItemDto getItem(@RequestHeader(HEADER_USER) Long userId,
+                           @PathVariable Long itemId) {
         log.info("Get item {}", itemId);
-        return mapper.returnItemDto(itemService.getItemById(itemId));
+        return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsUser(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getAllItemsUser(@RequestHeader(HEADER_USER) Long userId) {
 
         log.info("List items User {}", userId);
-        return itemService.getItemsUser(userId)
-                .stream()
-                .map(mapper::returnItemDto)
-                .collect(toList());
+        return itemService.getItemsUser(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> getSearchItem(String text) {
 
         log.info("Get item with key substring {}", text);
-        return itemService.searchItem(text)
-                .stream()
-                .map(mapper::returnItemDto)
-                .collect(toList());
+        return itemService.searchItem(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(HEADER_USER) Long userId,
+                                 @PathVariable Long itemId,
+                                 @RequestBody @Valid CommentDto commentDto) {
+
+        log.info("User {} add comment for Item {}", userId, itemId);
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }
