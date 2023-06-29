@@ -29,7 +29,7 @@ public class BookingController {
     public BookingOutDto addBooking(@RequestHeader(HEADER_USER) Long userId,
                                     @RequestBody @Valid BookingDto bookingDto) {
 
-        log.info("User {}, add new booking {}", userId, "bookingDto.getName()");
+        log.info("User {}, add new booking", userId);
         return bookingService.addBooking(bookingDto, userId);
     }
 
