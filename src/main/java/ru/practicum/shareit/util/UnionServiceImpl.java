@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -17,6 +18,7 @@ public class UnionServiceImpl implements UnionService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     public void checkUser(Long userId) {
@@ -39,6 +41,14 @@ public class UnionServiceImpl implements UnionService {
 
         if (!bookingRepository.existsById(bookingId)) {
             throw new NotFoundException(Booking.class, "Booking id " + bookingId + " not found.");
+        }
+    }
+
+    @Override
+    public void checkRequest(Long requestId) {
+
+        if (!itemRequestRepository.existsById(requestId)) {
+            throw new NotFoundException(Booking.class, "Request id " + requestId + " not found.");
         }
     }
 }

@@ -8,4 +8,5 @@ public interface UnionService {
 
     void checkBooking(Long booking);
 
+    void checkRequest(Long requestId);
 }

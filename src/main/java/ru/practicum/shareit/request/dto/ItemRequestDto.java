@@ -20,7 +20,6 @@ public class ItemRequestDto {
     @NotBlank(message = "Description cannot be blank")
     private String description;
 
-    @NotNull
     @PastOrPresent
     private LocalDate created;
 }
