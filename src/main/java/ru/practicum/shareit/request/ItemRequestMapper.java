@@ -3,6 +3,7 @@ package ru.practicum.shareit.request;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +21,8 @@ public class ItemRequestMapper {
 
     public static ItemRequest returnItemRequest(ItemRequestDto itemRequestDto, User user) {
         ItemRequest itemRequest = ItemRequest.builder()
-                .id(itemRequestDto.getId())
                 .description(itemRequestDto.getDescription())
-                .created(itemRequestDto.getCreated())
+                .created(Instant.now())
                 .requester(user)
                 .build();
         return itemRequest;

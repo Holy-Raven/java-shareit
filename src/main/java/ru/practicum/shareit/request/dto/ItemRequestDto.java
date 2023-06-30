@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.*;
-import java.time.LocalDate;
+import java.time.Instant;
 
 /**
  * TODO Sprint add-item-requests.
@@ -20,7 +20,6 @@ public class ItemRequestDto {
     @NotBlank(message = "Description cannot be blank")
     private String description;
 
-    @PastOrPresent
-    private LocalDate created;
+    private Instant created;
 }
 

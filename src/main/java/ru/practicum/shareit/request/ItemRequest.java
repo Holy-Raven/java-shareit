@@ -4,6 +4,7 @@ import lombok.*;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDate;
 
 /**
@@ -32,5 +33,5 @@ public class ItemRequest {
     private User requester;
 
     @Column(name = "created", nullable = false)
-    private LocalDate created;
+    private Instant created;
 }
