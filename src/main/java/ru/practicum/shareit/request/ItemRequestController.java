@@ -47,7 +47,6 @@ public class ItemRequestController {
         return ResponseEntity.ok(itemRequestService.getAllRequests(from, size));
     }
 
-
     @GetMapping("/{requestId}")
     public ResponseEntity<ItemRequestDto> getRequestById(@RequestHeader(HEADER_USER) Long userId,
                                                          @PathVariable("requestId") Long requestId) {

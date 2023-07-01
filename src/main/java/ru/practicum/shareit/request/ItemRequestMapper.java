@@ -3,8 +3,9 @@ package ru.practicum.shareit.request;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ItemRequestMapper {
@@ -14,6 +15,7 @@ public class ItemRequestMapper {
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
+                .items(Collections.emptyList())
                 .build();
 
         return itemRequestDto;
@@ -22,7 +24,7 @@ public class ItemRequestMapper {
     public static ItemRequest returnItemRequest(ItemRequestDto itemRequestDto, User user) {
         ItemRequest itemRequest = ItemRequest.builder()
                 .description(itemRequestDto.getDescription())
-                .created(Instant.now())
+                .created(LocalDateTime.now())
                 .requester(user)
                 .build();
         return itemRequest;

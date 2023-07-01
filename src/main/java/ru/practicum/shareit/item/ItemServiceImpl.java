@@ -11,6 +11,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.util.UnionService;
@@ -27,6 +28,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final UnionService unionService;
 
     @Transactional
@@ -36,9 +38,12 @@ public class ItemServiceImpl implements ItemService {
         unionService.checkUser(userId);
 
         User user = userRepository.findById(userId).get();
-
         Item item = ItemMapper.returnItem(itemDto, user);
 
+        if (itemDto.getRequestId() != null) {
+            unionService.checkRequest(itemDto.getRequestId());
+            item.setRequest(itemRequestRepository.findById(itemDto.getRequestId()).get());
+        }
         itemRepository.save(item);
 
         return ItemMapper.returnItemDto(item);

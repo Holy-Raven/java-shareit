@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserRepository;
@@ -47,6 +49,15 @@ public class itemRequestServiceImpl implements ItemRequestService {
         unionService.checkUser(userId);
 
         List<ItemRequest> requestList = itemRequestRepository.findByRequesterIdOrderByCreatedAsc(userId);
+
+        ItemRequestDto itemRequestDto;
+
+        for (ItemRequest itemRequest : requestList) {
+
+            itemRequestDto = ItemRequestMapper.returnItemRequestDto(itemRequest);
+            List<Item> items = itemRepository.findByRequestId(itemRequest.getId());
+            itemRequestDto.setItems(ItemMapper.returnItemDtoList(items));
+        }
 
         return ItemRequestMapper.returnItemRequestDtoList(requestList);
     }
