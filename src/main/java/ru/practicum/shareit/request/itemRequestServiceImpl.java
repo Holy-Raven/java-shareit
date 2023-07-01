@@ -15,8 +15,10 @@ import ru.practicum.shareit.util.UnionService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.exception.ValidationException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -48,22 +50,18 @@ public class itemRequestServiceImpl implements ItemRequestService {
 
         unionService.checkUser(userId);
 
-        List<ItemRequest> requestList = itemRequestRepository.findByRequesterIdOrderByCreatedAsc(userId);
+        List<ItemRequest> itemRequests = itemRequestRepository.findByRequesterIdOrderByCreatedAsc(userId);
 
-        ItemRequestDto itemRequestDto;
-
-        for (ItemRequest itemRequest : requestList) {
-
-            itemRequestDto = ItemRequestMapper.returnItemRequestDto(itemRequest);
-            List<Item> items = itemRepository.findByRequestId(itemRequest.getId());
-            itemRequestDto.setItems(ItemMapper.returnItemDtoList(items));
+        List<ItemRequestDto> result = new ArrayList<>();
+        for (ItemRequest itemRequest : itemRequests) {
+            result.add(addItemsToRequest(itemRequest));
         }
+        return result;
 
-        return ItemRequestMapper.returnItemRequestDtoList(requestList);
     }
 
     @Override
-    public List<ItemRequestDto> getAllRequests(Integer from, Integer size) {
+    public List<ItemRequestDto> getAllRequests(Integer from, Integer size, Long userId) {
 
         if (from == 0 && size == null) {
             return Collections.emptyList();
@@ -79,9 +77,13 @@ public class itemRequestServiceImpl implements ItemRequestService {
 
         PageRequest pageRequest = PageRequest.of(from, size, Sort.Direction.DESC, "created");
 
-        Iterable<ItemRequest> itemRequests = itemRequestRepository.findAll(pageRequest);
+        List<ItemRequest> itemRequests = itemRequestRepository.findByIdIsNotOrderByCreatedAsc(userId, pageRequest);
 
-        return ItemRequestMapper.returnItemRequestDtoList(itemRequests);
+        List<ItemRequestDto> result = new ArrayList<>();
+        for (ItemRequest itemRequest : itemRequests) {
+            result.add(addItemsToRequest(itemRequest));
+        }
+        return result;
     }
 
     @Override
@@ -92,10 +94,15 @@ public class itemRequestServiceImpl implements ItemRequestService {
 
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();
 
-        if (itemRequest.getRequester().getId() != userId) {
-            throw new ValidationException("this request does not belong to the user");
-        }
+        return addItemsToRequest(itemRequest);
+    }
 
-        return ItemRequestMapper.returnItemRequestDto(itemRequest);
+    private ItemRequestDto addItemsToRequest (ItemRequest itemRequest) {
+
+            ItemRequestDto itemRequestDto = ItemRequestMapper.returnItemRequestDto(itemRequest);
+            List<Item> items = itemRepository.findByRequestId(itemRequest.getId());
+            itemRequestDto.setItems(ItemMapper.returnItemDtoList(items));
+
+        return itemRequestDto;
     }
 }

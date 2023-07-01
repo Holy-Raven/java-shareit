@@ -17,7 +17,6 @@ public class ItemRequestMapper {
                 .created(itemRequest.getCreated())
                 .items(Collections.emptyList())
                 .build();
-
         return itemRequestDto;
     }
 
