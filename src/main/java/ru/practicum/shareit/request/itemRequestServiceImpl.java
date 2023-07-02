@@ -2,8 +2,8 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.Item;
@@ -13,10 +13,8 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.util.UnionService;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.exception.ValidationException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -28,7 +26,6 @@ public class itemRequestServiceImpl implements ItemRequestService {
     private final UserRepository userRepository;
     private final UnionService unionService;
     private final ItemRequestRepository itemRequestRepository;
-
 
     @Transactional
     @Override
@@ -61,23 +58,11 @@ public class itemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getAllRequests(Integer from, Integer size, Long userId) {
+    public List<ItemRequestDto> getAllRequests(Long userId, Integer from, Integer size) {
 
-        if (from == 0 && size == null) {
-            return Collections.emptyList();
-        }
+        PageRequest pageRequest = unionService.checkPageSize(from, size);
 
-        if (size <= 0) {
-            throw new ValidationException("\"size\" must be greater than 0");
-        }
-
-        if (from < 0) {
-            throw new ValidationException("\"from\" must be greater than or equal to 0");
-        }
-
-        PageRequest pageRequest = PageRequest.of(from, size, Sort.Direction.DESC, "created");
-
-        List<ItemRequest> itemRequests = itemRequestRepository.findByIdIsNotOrderByCreatedAsc(userId, pageRequest);
+        Page<ItemRequest> itemRequests = itemRequestRepository.findByIdIsNotOrderByCreatedAsc(userId, pageRequest);
 
         List<ItemRequestDto> result = new ArrayList<>();
         for (ItemRequest itemRequest : itemRequests) {

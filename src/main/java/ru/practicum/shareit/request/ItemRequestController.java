@@ -42,10 +42,10 @@ public class ItemRequestController {
     @GetMapping("/all")
     public ResponseEntity<List<ItemRequestDto>> getAllRequests(@RequestHeader(HEADER_USER) Long userId,
                                                                @RequestParam(defaultValue = "0", required = false) Integer from,
-                                                               @RequestParam(required = false) Integer size) {
+                                                               @RequestParam(defaultValue = "10",required = false) Integer size) {
 
         log.info("Get all requests by All users ");
-        return ResponseEntity.ok(itemRequestService.getAllRequests(from, size, userId));
+        return ResponseEntity.ok(itemRequestService.getAllRequests(userId, from, size));
     }
 
     @GetMapping("/{requestId}")
