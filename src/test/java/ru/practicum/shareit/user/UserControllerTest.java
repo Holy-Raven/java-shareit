@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
@@ -32,49 +31,58 @@ class UserControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    private UserDto userDto;
+    private UserDto firstUserDto;
+
+    private  UserDto secondUserDto;
 
     @BeforeEach
     void beforeEach() {
-        userDto = UserDto.builder()
+
+        firstUserDto = UserDto.builder()
                 .id(1L)
                 .name("Anna")
                 .email("anna@yandex.ru")
+                .build();
+
+        secondUserDto = UserDto.builder()
+                .id(2L)
+                .name("Sofia")
+                .email("sofia@yandex.ru")
                 .build();
     }
 
     @Test
     void addUser() throws Exception {
-        when(userService.addUser(any(UserDto.class))).thenReturn(userDto);
+        when(userService.addUser(any(UserDto.class))).thenReturn(firstUserDto);
 
         mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
+                        .content(mapper.writeValueAsString(firstUserDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(userDto.getName()), String.class))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail()), String.class));
+                .andExpect(jsonPath("$.id", is(firstUserDto.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(firstUserDto.getName()), String.class))
+                .andExpect(jsonPath("$.email", is(firstUserDto.getEmail()), String.class));
 
-        verify(userService, times(1)).addUser(userDto);
+        verify(userService, times(1)).addUser(firstUserDto);
     }
 
     @Test
     void updateUser() throws Exception {
-        when(userService.updateUser(any(UserDto.class), anyLong())).thenReturn(userDto);
+        when(userService.updateUser(any(UserDto.class), anyLong())).thenReturn(firstUserDto);
 
         mvc.perform(patch("/users/{userId}", 1L)
-                        .content(mapper.writeValueAsString(userDto))
+                        .content(mapper.writeValueAsString(firstUserDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(userDto.getName()), String.class))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail()), String.class));
+                .andExpect(jsonPath("$.id", is(firstUserDto.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(firstUserDto.getName()), String.class))
+                .andExpect(jsonPath("$.email", is(firstUserDto.getEmail()), String.class));
 
-        verify(userService, times(1)).updateUser(userDto, 1L);
+        verify(userService, times(1)).updateUser(firstUserDto, 1L);
     }
 
     @Test
@@ -87,28 +95,19 @@ class UserControllerTest {
 
     @Test
     void getUser() throws Exception {
-        when(userService.getUserById(1L)).thenReturn(userDto);
+        when(userService.getUserById(1L)).thenReturn(firstUserDto);
 
         mvc.perform(get("/users/{userId}", 1L))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(firstUserDto.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(firstUserDto.getName()), String.class))
+                .andExpect(jsonPath("$.email", is(firstUserDto.getEmail()), String.class));
 
         verify(userService, times(1)).getUserById(1L);
     }
 
     @Test
     void getAllUsers() throws Exception {
-
-        UserDto firstUserDto = UserDto.builder()
-                .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
-                .build();
-
-        UserDto secondUserDto = UserDto.builder()
-                .id(2L)
-                .name("Sofia")
-                .email("sofia@yandex.ru")
-                .build();
 
         when(userService.getAllUsers()).thenReturn(List.of(firstUserDto, secondUserDto));
 
