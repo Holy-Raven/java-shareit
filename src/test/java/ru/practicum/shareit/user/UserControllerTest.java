@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,7 @@ class UserControllerTest {
     private UserDto userDto;
 
     @BeforeEach
-    void setUp() {
+    void beforeEach() {
         userDto = UserDto.builder()
                 .id(1L)
                 .name("Anna")
@@ -44,7 +45,7 @@ class UserControllerTest {
 
     @Test
     void addUser() throws Exception {
-        when(userService.addUser(any())).thenReturn(userDto);
+        when(userService.addUser(any(UserDto.class))).thenReturn(userDto);
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(userDto))
@@ -61,7 +62,7 @@ class UserControllerTest {
 
     @Test
     void updateUser() throws Exception {
-        when(userService.updateUser(any(), anyLong())).thenReturn(userDto);
+        when(userService.updateUser(any(UserDto.class), anyLong())).thenReturn(userDto);
 
         mvc.perform(patch("/users/{userId}", 1L)
                         .content(mapper.writeValueAsString(userDto))
