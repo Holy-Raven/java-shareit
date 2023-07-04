@@ -12,8 +12,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.util.UnionService;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -33,12 +31,6 @@ public class ItemControllerTest {
     @MockBean
     private ItemService itemService;
 
-    @MockBean
-    private UserService userService;
-
-    @MockBean
-    private UnionService unionService;
-    
     @Autowired
     private ObjectMapper mapper;
 
