@@ -24,8 +24,8 @@ public class itemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final UnionService unionService;
     private final ItemRequestRepository itemRequestRepository;
+    private final UnionService unionService;
 
     @Transactional
     @Override
@@ -37,7 +37,7 @@ public class itemRequestServiceImpl implements ItemRequestService {
 
         ItemRequest itemRequest = ItemRequestMapper.returnItemRequest(itemRequestDto, user);
 
-        itemRequestRepository.save(itemRequest);
+        itemRequest = itemRequestRepository.save(itemRequest);
 
         return ItemRequestMapper.returnItemRequestDto(itemRequest);
     }
@@ -54,7 +54,6 @@ public class itemRequestServiceImpl implements ItemRequestService {
             result.add(addItemsToRequest(itemRequest));
         }
         return result;
-
     }
 
     @Override
@@ -82,7 +81,8 @@ public class itemRequestServiceImpl implements ItemRequestService {
         return addItemsToRequest(itemRequest);
     }
 
-    private ItemRequestDto addItemsToRequest (ItemRequest itemRequest) {
+    @Override
+    public ItemRequestDto addItemsToRequest (ItemRequest itemRequest) {
 
             ItemRequestDto itemRequestDto = ItemRequestMapper.returnItemRequestDto(itemRequest);
             List<Item> items = itemRepository.findByRequestId(itemRequest.getId());

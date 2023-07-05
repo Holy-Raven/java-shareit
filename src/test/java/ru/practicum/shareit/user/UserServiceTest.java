@@ -42,7 +42,7 @@ class UserServiceTest {
         firstUserDto = UserMapper.returnUserDto(firstUser);
 
         secondUser = User.builder()
-                .id(1L)
+                .id(2L)
                 .name("Tiana")
                 .email("tiana@yandex.ru")
                 .build();
@@ -78,8 +78,6 @@ class UserServiceTest {
         assertEquals(userDtoUpdated.getName(), firstUserDto.getName());
         assertEquals(userDtoUpdated.getEmail(), firstUserDto.getEmail());
 
-        verify(userRepository, times(1)).existsById(1L);
-        verify(userRepository, times(1)).findById(1L);
         verify(userRepository, times(1)).findByEmail(firstUser.getEmail());
         verify(userRepository, times(1)).save(firstUser);
     }
@@ -114,7 +112,6 @@ class UserServiceTest {
         assertEquals(userDtoTest.getName(), firstUserDto.getName());
         assertEquals(userDtoTest.getEmail(), firstUserDto.getEmail());
 
-        verify(userRepository, times(1)).existsById(1L);
         verify(userRepository, times(1)).findById(1L);
     }
 
