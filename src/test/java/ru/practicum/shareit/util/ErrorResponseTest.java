@@ -10,10 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ErrorResponseTest {
 
     ErrorResponse errorResponse;
+
     String error = "textError";
 
     @Test
-    void ErrorResponse() {
+    void errorResponse() {
         errorResponse = new ErrorResponse(error);
         assertEquals(error, errorResponse.getError());
     }
