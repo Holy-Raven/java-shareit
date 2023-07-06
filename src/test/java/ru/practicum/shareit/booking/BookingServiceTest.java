@@ -115,11 +115,11 @@ public class BookingServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(secondUser));
         when(bookingRepository.save(any(Booking.class))).thenReturn(firstBooking);
 
-        BookingOutDto BookingOutDtoTest = bookingService.addBooking(bookingDto, anyLong());
+        BookingOutDto bookingOutDtoTest = bookingService.addBooking(bookingDto, anyLong());
 
-        assertEquals(BookingOutDtoTest.getItem(), itemDto);
-        assertEquals(BookingOutDtoTest.getStatus(), firstBooking.getStatus());
-        assertEquals(BookingOutDtoTest.getBooker(), UserMapper.returnUserDto(secondUser));
+        assertEquals(bookingOutDtoTest.getItem(), itemDto);
+        assertEquals(bookingOutDtoTest.getStatus(), firstBooking.getStatus());
+        assertEquals(bookingOutDtoTest.getBooker(), UserMapper.returnUserDto(secondUser));
 
         verify(bookingRepository, times(1)).save(any(Booking.class));
     }
@@ -212,11 +212,11 @@ public class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(firstBooking));
         when(userRepository.existsById(anyLong())).thenReturn(true);
 
-        BookingOutDto BookingOutDtoTest = bookingService.getBookingById(firstUser.getId(), firstBooking.getId());
+        BookingOutDto bookingOutDtoTest = bookingService.getBookingById(firstUser.getId(), firstBooking.getId());
 
-        assertEquals(BookingOutDtoTest.getItem(), itemDto);
-        assertEquals(BookingOutDtoTest.getStatus(), firstBooking.getStatus());
-        assertEquals(BookingOutDtoTest.getBooker(), UserMapper.returnUserDto(firstUser));
+        assertEquals(bookingOutDtoTest.getItem(), itemDto);
+        assertEquals(bookingOutDtoTest.getStatus(), firstBooking.getStatus());
+        assertEquals(bookingOutDtoTest.getBooker(), UserMapper.returnUserDto(firstUser));
 
     }
 
