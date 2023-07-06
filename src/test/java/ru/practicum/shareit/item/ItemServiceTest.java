@@ -21,6 +21,7 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.util.UnionService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -199,7 +200,7 @@ public class ItemServiceTest {
     @Test
     void searchItem() {
         when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
-        when(itemRepository.search(anyString(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(item)));
+        when(itemRepository.search(anyString(), any(PageRequest.class))).thenReturn(new ArrayList<>(List.of(item)));
 
         ItemDto itemDtoTest = itemService.searchItem("text", 5, 10).get(0);
 

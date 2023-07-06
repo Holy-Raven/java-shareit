@@ -47,7 +47,6 @@ public class ItemControllerTest {
 
     private User user;
 
-
     @BeforeEach
     void beforeEach() {
 
@@ -72,7 +71,7 @@ public class ItemControllerTest {
                 .build();
 
         firstitemDto = ItemDto.builder()
-                .requestId(1L)
+                .id(1L)
                 .name("screwdriver")
                 .description("works well, does not ask to eat")
                 .available(true)
@@ -81,7 +80,7 @@ public class ItemControllerTest {
                 .build();
 
         secondItemDto = ItemDto.builder()
-                .requestId(1L)
+                .id(1L)
                 .name("guitar")
                 .description("a very good tool")
                 .available(true)
