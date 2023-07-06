@@ -32,6 +32,7 @@ public class ItemRequestController {
         log.info("User {}, add new request", userId);
         return ResponseEntity.ok(itemRequestService.addRequest(itemRequestDto, userId));
     }
+
     @GetMapping
     public ResponseEntity<List<ItemRequestDto>> getRequests(@RequestHeader(HEADER_USER) Long userId) {
 

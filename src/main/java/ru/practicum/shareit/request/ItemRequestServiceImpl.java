@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class itemRequestServiceImpl implements ItemRequestService {
+public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -82,7 +82,7 @@ public class itemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestDto addItemsToRequest (ItemRequest itemRequest) {
+    public ItemRequestDto addItemsToRequest(ItemRequest itemRequest) {
 
             ItemRequestDto itemRequestDto = ItemRequestMapper.returnItemRequestDto(itemRequest);
             List<Item> items = itemRepository.findByRequestId(itemRequest.getId());
