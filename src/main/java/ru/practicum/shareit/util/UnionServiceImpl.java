@@ -9,6 +9,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
@@ -50,7 +51,7 @@ public class UnionServiceImpl implements UnionService {
     public void checkRequest(Long requestId) {
 
         if (!itemRequestRepository.existsById(requestId)) {
-            throw new NotFoundException(Booking.class, "Request id " + requestId + " not found.");
+            throw new NotFoundException(ItemRequest.class, "Request id " + requestId + " not found.");
         }
     }
 
