@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.util.UnionService;
@@ -27,6 +29,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final UnionService unionService;
 
     @Transactional
@@ -36,9 +39,12 @@ public class ItemServiceImpl implements ItemService {
         unionService.checkUser(userId);
 
         User user = userRepository.findById(userId).get();
-
         Item item = ItemMapper.returnItem(itemDto, user);
 
+        if (itemDto.getRequestId() != null) {
+            unionService.checkRequest(itemDto.getRequestId());
+            item.setRequest(itemRequestRepository.findById(itemDto.getRequestId()).get());
+        }
         itemRepository.save(item);
 
         return ItemMapper.returnItemDto(item);
@@ -121,13 +127,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> getItemsUser(long userId) {
+    public List<ItemDto> getItemsUser(long userId, Integer from, Integer size) {
 
         unionService.checkUser(userId);
+        PageRequest pageRequest = unionService.checkPageSize(from, size);
 
         List<ItemDto> resultList = new ArrayList<>();
 
-        for (ItemDto itemDto : ItemMapper.returnItemDtoList(itemRepository.findByOwnerId(userId))) {
+        for (ItemDto itemDto : ItemMapper.returnItemDtoList(itemRepository.findByOwnerId(userId, pageRequest))) {
 
             Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
             Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
@@ -163,12 +170,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public  List<ItemDto> searchItem(String text) {
+    public  List<ItemDto> searchItem(String text, Integer from, Integer size) {
+
+        PageRequest pageRequest = unionService.checkPageSize(from, size);
 
         if (text.equals("")) {
             return Collections.emptyList();
         } else {
-            return ItemMapper.returnItemDtoList(itemRepository.search(text));
+            return ItemMapper.returnItemDtoList(itemRepository.search(text, pageRequest));
         }
     }
 
@@ -191,8 +200,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Comment comment = CommentMapper.returnComment(commentDto, item, user, dateTime);
-        commentRepository.save(comment);
 
-        return CommentMapper.returnCommentDto(comment);
+        return CommentMapper.returnCommentDto(commentRepository.save(comment));
     }
 }
