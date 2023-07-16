@@ -7,6 +7,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import ru.practicum.shareit.booking.dto.BookingDto;
+
+import java.util.List;
+
 @Data
 @Builder
 public class ItemDto {
@@ -26,5 +30,9 @@ public class ItemDto {
 
     @Positive(message = "must be positive")
     private Long requestId;
+
+    private BookingDto lastBooking;
+    private BookingDto nextBooking;
+    private List<CommentDto> comments;
 
 }

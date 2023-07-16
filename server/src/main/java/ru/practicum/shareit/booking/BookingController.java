@@ -36,8 +36,8 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<BookingOutDto> approveBooking(@RequestHeader(HEADER_USER) Long userId,
-                                        @PathVariable Long bookingId,
-                                        @RequestParam Boolean approved) {
+                                                        @PathVariable Long bookingId,
+                                                        @RequestParam Boolean approved) {
 
         log.info("User {}, changed the status booking {}", userId, bookingId);
         return ResponseEntity.ok(bookingService.approveBooking(userId, bookingId, approved));
@@ -45,7 +45,7 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<BookingOutDto> getBookingById(@RequestHeader(HEADER_USER) Long userId,
-                                        @PathVariable Long bookingId) {
+                                                        @PathVariable Long bookingId) {
 
         log.info("Get booking {}", bookingId);
         return ResponseEntity.ok(bookingService.getBookingById(userId, bookingId));
