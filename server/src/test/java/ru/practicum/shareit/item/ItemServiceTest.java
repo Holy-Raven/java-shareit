@@ -182,7 +182,7 @@ public class ItemServiceTest {
     void getItemsUser() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
-        when(itemRepository.findByOwnerId(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(item)));
+        when(itemRepository.findByOwnerIdOrderById(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(item)));
         when(bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(firstBooking));
         when(bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(secondBooking));
         when(commentRepository.findAllByItemId(anyLong())).thenReturn(List.of(comment));
@@ -194,7 +194,7 @@ public class ItemServiceTest {
         assertEquals(itemDtoTest.getAvailable(), item.getAvailable());
         assertEquals(itemDtoTest.getRequestId(), item.getRequest().getId());
 
-        verify(itemRepository, times(1)).findByOwnerId(anyLong(), any(PageRequest.class));
+        verify(itemRepository, times(1)).findByOwnerIdOrderById(anyLong(), any(PageRequest.class));
     }
 
     @Test
