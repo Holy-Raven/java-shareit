@@ -117,7 +117,6 @@ public class RequestServiceTest {
 
     @Test
     void getAllRequests() {
-        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
         when(itemRequestRepository.findByIdIsNotOrderByCreatedAsc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstItemRequest)));
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
 

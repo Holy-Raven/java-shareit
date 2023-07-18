@@ -15,7 +15,6 @@ import java.util.List;
  */
 
 @Slf4j
-@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
@@ -24,14 +23,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
 
         log.info("Add User {} ", userDto.getId());
         return ResponseEntity.ok(userService.addUser(userDto));
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable Long userId) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto,
+                                              @PathVariable Long userId) {
 
         log.info("Update User {} ", userDto.getId());
         return ResponseEntity.ok(userService.updateUser(userDto, userId));

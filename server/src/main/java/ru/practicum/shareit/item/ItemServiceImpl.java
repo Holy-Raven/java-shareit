@@ -130,7 +130,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getItemsUser(long userId, Integer from, Integer size) {
 
         unionService.checkUser(userId);
-        PageRequest pageRequest = unionService.checkPageSize(from, size);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
 
         List<ItemDto> resultList = new ArrayList<>();
 
@@ -172,7 +172,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public  List<ItemDto> searchItem(String text, Integer from, Integer size) {
 
-        PageRequest pageRequest = unionService.checkPageSize(from, size);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
 
         if (text.equals("")) {
             return Collections.emptyList();

@@ -181,7 +181,6 @@ public class ItemServiceTest {
     @Test
     void getItemsUser() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
         when(itemRepository.findByOwnerIdOrderById(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(item)));
         when(bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(firstBooking));
         when(bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(secondBooking));
@@ -199,7 +198,6 @@ public class ItemServiceTest {
 
     @Test
     void searchItem() {
-        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
         when(itemRepository.search(anyString(), any(PageRequest.class))).thenReturn(new ArrayList<>(List.of(item)));
 
         ItemDto itemDtoTest = itemService.searchItem("text", 5, 10).get(0);
@@ -214,8 +212,6 @@ public class ItemServiceTest {
 
     @Test
     void searchItemEmptyText() {
-        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
-
         List<ItemDto> itemDtoTest = itemService.searchItem("", 5, 10);
 
         assertTrue(itemDtoTest.isEmpty());

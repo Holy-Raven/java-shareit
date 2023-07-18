@@ -105,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingOutDto> getAllBookingsByBookerId(long userId, String state, Integer from, Integer size) {
 
         unionService.checkUser(userId);
-        PageRequest pageRequest = unionService.checkPageSize(from, size);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
 
         Page<Booking> bookings = null;
 
@@ -140,7 +140,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(long userId, String state, Integer from, Integer size) {
 
         unionService.checkUser(userId);
-        PageRequest pageRequest = unionService.checkPageSize(from, size);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
 
         if (itemRepository.findByOwnerId(userId).isEmpty()) {
             throw new ValidationException("User does not have items to booking");

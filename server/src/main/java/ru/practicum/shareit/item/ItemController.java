@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.HEADER_USER;
@@ -28,7 +27,7 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> addItem(@RequestHeader(HEADER_USER) Long userId,
-                                           @RequestBody @Valid ItemDto itemDto) {
+                                           @RequestBody ItemDto itemDto) {
 
         log.info("User {}, add new item {}", userId, itemDto.getName());
         return ResponseEntity.ok(itemService.addItem(userId, itemDto));
@@ -71,7 +70,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<CommentDto> addComment(@RequestHeader(HEADER_USER) Long userId,
                                                  @PathVariable Long itemId,
-                                                 @RequestBody @Valid CommentDto commentDto) {
+                                                 @RequestBody CommentDto commentDto) {
 
         log.info("User {} add comment for Item {}", userId, itemId);
         return ResponseEntity.ok(itemService.addComment(userId, itemId, commentDto));

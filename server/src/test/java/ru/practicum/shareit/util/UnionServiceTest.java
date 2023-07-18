@@ -56,12 +56,4 @@ public class UnionServiceTest {
         when(itemRequestRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(NotFoundException.class, () -> unionService.checkRequest(1L));
     }
-
-    @Test
-    void checkPageSize() {
-        assertThrows(ValidationException.class, () -> unionService.checkPageSize(0,0));
-        assertThrows(ValidationException.class, () -> unionService.checkPageSize(5,-5));
-        assertThrows(ValidationException.class, () -> unionService.checkPageSize(5,0));
-        assertThrows(ValidationException.class, () -> unionService.checkPageSize(-5,5));
-    }
 }

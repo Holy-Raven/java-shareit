@@ -17,12 +17,7 @@ public class UserDto {
 
     private Long id;
 
-    @NotNull(message = "Login cannot be empty or contain spaces.")
-    @NotBlank(message = "Login cannot be empty or contain spaces.")
     private String name;
 
-    @NotNull(message = "Email cannot be empty")
-    @NotBlank(message = "Email cannot be empty")
-    @Email(message = "Email must contain the character @")
     private String email;
 }

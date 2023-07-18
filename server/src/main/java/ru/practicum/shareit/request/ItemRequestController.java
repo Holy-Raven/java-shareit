@@ -3,7 +3,6 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
@@ -17,7 +16,6 @@ import static ru.practicum.shareit.util.Constant.HEADER_USER;
  */
 
 @Slf4j
-@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/requests")
@@ -27,7 +25,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<ItemRequestDto> addRequest(@RequestHeader(HEADER_USER) Long userId,
-                                                    @RequestBody @Valid ItemRequestDto itemRequestDto) {
+                                                    @RequestBody ItemRequestDto itemRequestDto) {
 
         log.info("User {}, add new request", userId);
         return ResponseEntity.ok(itemRequestService.addRequest(itemRequestDto, userId));

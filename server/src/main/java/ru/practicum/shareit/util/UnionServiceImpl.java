@@ -1,12 +1,10 @@
 package ru.practicum.shareit.util;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.request.ItemRequest;
@@ -53,22 +51,5 @@ public class UnionServiceImpl implements UnionService {
         if (!itemRequestRepository.existsById(requestId)) {
             throw new NotFoundException(ItemRequest.class, "Request id " + requestId + " not found.");
         }
-    }
-
-    @Override
-    public PageRequest checkPageSize(Integer from, Integer size) {
-
-        if (from == 0 && size == 0) {
-            throw new ValidationException("\"size\" and \"from\"must be not equal 0");
-        }
-
-        if (size <= 0) {
-            throw new ValidationException("\"size\" must be greater than 0");
-        }
-
-        if (from < 0) {
-            throw new ValidationException("\"from\" must be greater than or equal to 0");
-        }
-        return PageRequest.of(from / size, size);
     }
 }
